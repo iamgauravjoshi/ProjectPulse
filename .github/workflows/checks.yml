@@ -1,0 +1,54 @@
+name: Foundation checks
+
+on: [push, pull_request]
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.1-pg17@sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21
+        env:
+          POSTGRES_USER: contextboard
+          POSTGRES_PASSWORD: contextboard_ci
+          POSTGRES_DB: contextboard_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U contextboard -d contextboard_test"
+          --health-interval 3s --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://contextboard:contextboard_ci@127.0.0.1:5432/contextboard_test
+      TEST_DATABASE_URL: postgresql+psycopg://contextboard:contextboard_ci@127.0.0.1:5432/contextboard_test
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.19"
+          python-version: "3.12"
+      - name: Backend checks
+        working-directory: apps/api
+        run: |
+          uv sync --frozen
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy
+          uv run pytest
+          uv run alembic check
+          uv run python -m app.seed
+      - name: Frontend checks
+        working-directory: apps/web
+        run: |
+          npm ci
+          npm run lint
+          npm run typecheck
+          npm run format:check
+          npm test
+          npm run build
+          npx playwright install --with-deps chromium
+          npm run test:e2e

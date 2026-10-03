@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #f7f9f8;
+  --color-ink: #25332e;
+  --color-muted: #66736d;
+  --color-line: #e3e9e5;
+  --color-accent: #1b6650;
+  --color-accent-soft: #edf5f0;
+  --color-surface-muted: #f2f5f3;
+}
+
+:root {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color-scheme: light;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+}
+main {
+  overflow-wrap: anywhere;
+}
+button,
+a,
+[tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@layer components {
+  .button-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50;
+  }
+  .button-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-medium text-ink hover:bg-surface-muted;
+  }
+  .icon-button {
+    @apply flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-muted hover:text-ink;
+  }
+  .skeleton {
+    @apply animate-pulse rounded-md bg-line/70 motion-reduce:animate-none;
+  }
+}

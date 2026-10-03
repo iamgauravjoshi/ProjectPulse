@@ -1,0 +1,36 @@
+[project]
+name = "contextboard-api"
+version = "0.1.0"
+description = "Project intelligence and decision reconciliation backend"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.34,<1",
+  "pydantic-settings>=2.8,<3",
+  "sqlalchemy>=2.0,<2.1",
+  "psycopg[binary]>=3.2,<4",
+  "alembic>=1.15,<2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "httpx2>=2,<3", "ruff>=0.11,<1", "mypy>=1.15,<2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["integration: requires an explicitly configured disposable PostgreSQL database"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["app"]
+
+[tool.uv]
+package = false

@@ -1,0 +1,170 @@
+{
+  "project": {
+    "id": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+    "name": "Client Portal Modernization",
+    "description": "Modernize the client portal while keeping project decisions traceable."
+  },
+  "members": [
+    {
+      "id": "5ea74d6b-63cf-5376-bfe8-49fad55ddd60",
+      "name": "Alex",
+      "role": "ARCHITECT"
+    },
+    {
+      "id": "96edfec9-964b-576c-a75d-3cd3ca896495",
+      "name": "John",
+      "role": "TECH_LEAD"
+    },
+    {
+      "id": "acf0a681-26e8-5ec9-93d3-5a7f6276fd72",
+      "name": "Maya",
+      "role": "QA"
+    },
+    {
+      "id": "892b7c18-5b23-526f-a899-757d871d7a06",
+      "name": "Sarah",
+      "role": "PRODUCT_OWNER"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "d026eb9e-1330-5a0b-a5b1-c26305569fc7",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Single sign-on",
+      "description": "SSO is planned for Phase 2.",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "status": "ACTIVE",
+      "phase": 2
+    }
+  ],
+  "decisions": [
+    {
+      "id": "2dc82bc4-8043-524b-a0d8-337ed901c364",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Database",
+      "description": "Use PostgreSQL.",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "decisionStatus": "CONFIRMED",
+      "impactArea": "Architecture",
+      "madeBy": "96edfec9-964b-576c-a75d-3cd3ca896495",
+      "confirmedAt": "2026-10-03T00:00:00Z"
+    },
+    {
+      "id": "39517df1-3b09-50f2-aa2a-23922752448f",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "CSV export",
+      "description": "CSV export remains synchronous.",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "decisionStatus": "CONFIRMED",
+      "impactArea": "Architecture",
+      "madeBy": "96edfec9-964b-576c-a75d-3cd3ca896495",
+      "confirmedAt": "2026-10-03T00:00:00Z"
+    },
+    {
+      "id": "80caf862-da5c-5a04-9eaa-5ca4cf715af7",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Payment retry",
+      "description": "Retry failed payments three times.",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "decisionStatus": "CONFIRMED",
+      "impactArea": "Product behaviour",
+      "madeBy": "96edfec9-964b-576c-a75d-3cd3ca896495",
+      "confirmedAt": "2026-10-03T00:00:00Z"
+    }
+  ],
+  "commitments": [
+    {
+      "id": "6607c14e-add2-5dcb-afda-d4a3e8b97dde",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Production credentials",
+      "description": "Production access is pending; no delivery date has been agreed.",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "status": "OPEN",
+      "ownerId": "96edfec9-964b-576c-a75d-3cd3ca896495",
+      "saidBy": null,
+      "dueDate": null,
+      "dependencyId": null
+    }
+  ],
+  "risks": [
+    {
+      "id": "68f92932-c3eb-5681-9da0-96973cd4735f",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Pending security approval",
+      "description": "Launch may be blocked until security review is completed.",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "status": "OPEN",
+      "severity": "HIGH"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "5ccb197b-e265-5b97-971a-17f82788c0ac",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Portal launch",
+      "description": "",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "status": "PLANNED",
+      "date": "2026-11-24"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "540513e6-ba7c-5ec1-9825-39a459c1e0fb",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Security review",
+      "description": "Security approval is pending before launch.",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "status": "PENDING",
+      "ownerId": null,
+      "blockedMilestoneId": "5ccb197b-e265-5b97-971a-17f82788c0ac"
+    }
+  ],
+  "questions": [
+    {
+      "id": "5b896da5-90d9-553b-9880-c40aac7fec66",
+      "projectId": "b0b0fead-d9da-54f3-9fd2-aac6e7ab1a0d",
+      "title": "Who will own the security review?",
+      "description": "",
+      "sourceKind": "SEED",
+      "sourceLabel": "Human-established demo baseline",
+      "version": 1,
+      "updatedAt": "2026-10-03T08:22:34.665530Z",
+      "status": "OPEN",
+      "ownerId": null
+    }
+  ],
+  "activity": [
+    {
+      "id": "f70bc2fc-e53c-5592-b412-9e230840e3b8",
+      "action": "DEMO_SEEDED",
+      "entityType": "project",
+      "createdAt": "2026-10-03T08:22:34.665530Z"
+    }
+  ],
+  "generatedAt": "2026-10-03T09:25:36.253738Z"
+}
