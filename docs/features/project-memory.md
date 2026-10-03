@@ -60,6 +60,20 @@ through explicit Alembic revisions. Existing seed identities and edits are prese
 Project-scoped canonical write routes, then document upload/list/delete/index routes
 and bounded context search. Exact request contracts are recorded at each checkpoint.
 
+Step 2.1a implements `/api/v1/projects/{projectId}/state/{kind}` for the six
+whitelisted kinds: `requirements`, `decisions`, `milestones`, `risks`, `commitments`,
+`dependencies`. GET lists records; POST creates human baseline records. GET/PUT/
+DELETE at `/{recordId}` handle individual records. PUT accepts
+`{expectedVersion, values}` (complete editable fields), and DELETE requires the
+`expectedVersion` query parameter. Server-owned IDs, provenance, speaker/confidence,
+actor and confirmation timestamps cannot be submitted as editable fields.
+
+Create/edit/delete and their actor-attributed audit events commit together. Updates
+and deletes lock the row and reject stale versions with 409. Cross-project IDs are
+hidden; invalid references return 422. Referenced records cannot be deleted until
+their links are removed (409). Manual confirmation is explicit through the status;
+proposals remain unconfirmed. The local actor is still the seeded product owner.
+
 ## UI changes
 
 Purple shared tokens and favicon; a manual project-state editor; document library;

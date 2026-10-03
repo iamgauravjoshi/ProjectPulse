@@ -18,7 +18,6 @@ from app.db.models import (
     Risk,
     User,
 )
-from app.domain.demo_identity import demo_id
 from app.domain.workspace import (
     ActivityView,
     CanonicalView,
@@ -34,9 +33,7 @@ from app.domain.workspace import (
     WorkspaceSnapshot,
 )
 from app.repositories.canonical import CanonicalRepository
-
-# Development-only identity. Never read an actor ID from a browser request.
-LOCAL_DEMO_ACTOR_ID = demo_id("sarah")
+from app.services.project_access import LOCAL_DEMO_ACTOR_ID
 
 
 def list_projects(session: Session) -> list[ProjectSummary]:
