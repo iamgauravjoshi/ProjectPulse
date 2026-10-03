@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from uuid import NAMESPACE_URL, UUID, uuid5
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -18,6 +18,7 @@ from app.db.models import (
     Risk,
     User,
 )
+from app.domain.demo_identity import demo_id
 from app.domain.workspace import (
     ActivityView,
     CanonicalView,
@@ -35,7 +36,7 @@ from app.domain.workspace import (
 from app.repositories.canonical import CanonicalRepository
 
 # Development-only identity. Never read an actor ID from a browser request.
-LOCAL_DEMO_ACTOR_ID = uuid5(NAMESPACE_URL, "https://contextboard.local/demo/sarah")
+LOCAL_DEMO_ACTOR_ID = demo_id("sarah")
 
 
 def list_projects(session: Session) -> list[ProjectSummary]:

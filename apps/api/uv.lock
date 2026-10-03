@@ -66,7 +66,7 @@ wheels = [
 ]
 
 [[package]]
-name = "contextboard-api"
+name = "projectpulse-api"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

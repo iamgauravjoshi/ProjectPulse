@@ -37,10 +37,10 @@ function Sidebar({
           aria-hidden="true"
           className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-base font-semibold text-white"
         >
-          C
+          P
         </span>
         <span className="text-base font-semibold tracking-tight text-ink">
-          ContextBoard
+          ProjectPulse
         </span>
       </div>
       <div className="mb-4 px-5">

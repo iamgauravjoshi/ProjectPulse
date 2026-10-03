@@ -2,13 +2,13 @@ services:
   db:
     image: pgvector/pgvector:0.8.1-pg17@sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-contextboard}
+      POSTGRES_USER: ${POSTGRES_USER:-projectpulse}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-      POSTGRES_DB: ${POSTGRES_DB:-contextboard}
+      POSTGRES_DB: ${POSTGRES_DB:-projectpulse}
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-54329}:5432"
     volumes:
-      - contextboard_pgdata:/var/lib/postgresql/data
+      - projectpulse_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 3s
@@ -16,4 +16,5 @@ services:
       retries: 10
 
 volumes:
-  contextboard_pgdata:
+  projectpulse_pgdata:
+    name: ${POSTGRES_DATA_VOLUME:-projectpulse_pgdata}

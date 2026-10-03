@@ -1,5 +1,8 @@
 # Phase 0 checkpoint results
 
+Product and command examples use the current ProjectPulse naming. Historical
+executions used the original development identifiers before the product rename.
+
 Date: 3 October 2026 (Asia/Calcutta). Phase 0 complete.
 Historical baseline: [current-state assessment](../architecture/current-state.md).
 
@@ -49,7 +52,7 @@ Checks executed:
 
 | Check | Command (in corresponding app directory) | Result |
 | --- | --- | --- |
-| Locked frontend install | `npm ci --offline --cache /tmp/contextboard-npm --no-audit --no-fund` | Passed, 373 packages |
+| Locked frontend install | `npm ci --offline --cache /tmp/projectpulse-npm --no-audit --no-fund` | Passed, 373 packages |
 | Frontend production build | `NEXT_TELEMETRY_DISABLED=1 npm run build` | Passed, Next.js 16.3.8 |
 | Frontend lint/type/format | `npm run lint`, `npm run typecheck`, `npm run format:check` | All passed |
 | Locked backend install | `uv sync --frozen --offline` | Passed |
@@ -63,7 +66,7 @@ The technical page does not implement Phase 1 workspace behavior.
 Environment notes: dependency downloads and TestClient required the execution
 tool's network permission (including the event-loop socket used by TestClient).
 An initial restricted test process stalled; it was stopped and rerun successfully
-with that permission. uv uses `/tmp/contextboard-uv` because the environment's
+with that permission. uv uses `/tmp/projectpulse-uv` because the environment's
 default home cache is read-only. Downloads preserve proxy/TLS verification.
 The installed ESLint dependency emits an upstream deprecation notice during install;
 lint executes without warnings. Backend TestClient uses the supported `httpx2`
@@ -80,11 +83,11 @@ Next checkpoint: Step 0.3b, PostgreSQL and migration plumbing.
 Implemented: localhost PostgreSQL 17/pgvector 0.8.1 Compose service pinned to image
 digest, environment settings, SQLAlchemy engine/session handling, Alembic plumbing,
 `0001_vector`, safe `/health/ready`, and guarded disposable-database fixtures.
-The database is local, and the integration database is `contextboard_test`.
+The database is local, and the integration database is `projectpulse_test`.
 
 Executed `alembic upgrade head` and `alembic current` against the fresh development
 database: `0001_vector (head)`. Ran Ruff lint/format, mypy and
-`TEST_DATABASE_URL=.../contextboard_test uv run --no-sync pytest -q`:
+`TEST_DATABASE_URL=.../projectpulse_test uv run --no-sync pytest -q`:
 **2 unit/HTTP tests and 3 real-PostgreSQL integration tests passed, no warnings**.
 
 Integration checks verify extension installation, full rollback/reapply, readiness
@@ -166,9 +169,9 @@ Final executed checks:
 | `NEXT_TELEMETRY_DISABLED=1 npm run build` | Passed, production build |
 | `uv sync --frozen --offline` | Passed |
 | Ruff lint/format and mypy | Passed, 23 application source files type-checked |
-| `TEST_DATABASE_URL=.../contextboard_test uv run --no-sync pytest -q` | 49 passed: 2 unit/HTTP + 47 PostgreSQL integration |
+| `TEST_DATABASE_URL=.../projectpulse_test uv run --no-sync pytest -q` | 49 passed: 2 unit/HTTP + 47 PostgreSQL integration |
 | `alembic check` | No schema upgrade operations detected |
-| `UV_CACHE_DIR=/tmp/contextboard-uv PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e` | 2 passed |
+| `UV_CACHE_DIR=/tmp/projectpulse-uv PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e` | 2 passed |
 
 The browser run uses actual Chromium, production Next.js on port 3010 and FastAPI
 on port 8010. It verifies title/content, desktop/mobile visibility, no horizontal

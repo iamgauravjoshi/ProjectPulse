@@ -102,12 +102,14 @@ or mutate canonical state. No public deployment is part of this phase.
 
 ## Testing performed
 
-All three steps complete: **56 backend tests** (3 unit/HTTP, 53 real PostgreSQL
+All three steps complete: **57 backend tests** (4 unit/HTTP, 53 real PostgreSQL
 integration), **19 frontend domain tests**, and **19 browser tests** pass.
 Build, lint, formatting and type checks pass. Coverage includes scoped reads,
 confirmed-state counts, source isolation, calendar/date boundaries, keyboard
 navigation, filters, retry, empty states, long names and the complete attention flow.
-Six affected browser cases were rerun after the final mobile header adjustment.
+Six affected browser cases were rerun after the mobile header adjustment. The
+full suite was rerun after the ProjectPulse rename; the additional backend test
+protects installed project/actor IDs. Screenshots show the current product name.
 Exact commands and regression review are in
 [phase-1-results.md](../testing/phase-1-results.md).
 

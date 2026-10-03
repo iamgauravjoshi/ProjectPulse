@@ -1,6 +1,6 @@
 from datetime import UTC, date, datetime
 from typing import Any
-from uuid import NAMESPACE_URL, UUID, uuid5
+from uuid import UUID
 
 from sqlalchemy.orm import Session
 
@@ -18,11 +18,7 @@ from app.db.models import (
     Risk,
     User,
 )
-
-
-def demo_id(label: str) -> UUID:
-    return uuid5(NAMESPACE_URL, f"https://contextboard.local/demo/{label}")
-
+from app.domain.demo_identity import demo_id
 
 DEMO_PROJECT_ID = demo_id("project")
 BASELINE_TIME = datetime(2026, 10, 3, tzinfo=UTC)
@@ -58,7 +54,7 @@ def seed_demo(session: Session) -> UUID:
         ("alex", "Alex", "ARCHITECT"),
         ("maya", "Maya", "QA"),
     ]:
-        _ensure(session, User, label, display_name=name, email=f"{label}@contextboard.demo")
+        _ensure(session, User, label, display_name=name, email=f"{label}@projectpulse.demo")
         _ensure(
             session,
             ProjectMember,

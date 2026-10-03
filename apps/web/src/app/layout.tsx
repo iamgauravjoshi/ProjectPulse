@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ContextBoard — Project workspace",
+  title: "ProjectPulse — Project workspace",
   description: "Project intelligence and decision reconciliation.",
 };
 

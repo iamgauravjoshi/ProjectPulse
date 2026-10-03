@@ -5,7 +5,7 @@ from app.api.health import router as health_router
 from app.api.projects import router as projects_router
 from app.domain.errors import ProjectNotFound, WorkspaceUnavailable
 
-app = FastAPI(title="ContextBoard API", version="0.1.0")
+app = FastAPI(title="ProjectPulse API", version="0.1.0")
 app.include_router(health_router)
 app.include_router(projects_router)
 

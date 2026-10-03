@@ -1,4 +1,4 @@
-# Run ContextBoard on your laptop
+# Run ProjectPulse on your laptop
 
 The source built in this chat lives in a cloud workspace at
 `/workspace/ProjectPulse`. Cloning the GitHub repository creates an independent
@@ -16,10 +16,10 @@ The shell examples use Bash; on Windows use Git Bash or WSL with Docker integrat
 Clone the completed phase branch into your chosen folder:
 
 ```sh
-git clone --branch phase/1-project-workspace-ui https://github.com/iamgauravjoshi/ProjectPulse.git
+git clone --branch main https://github.com/iamgauravjoshi/ProjectPulse.git
 cd ProjectPulse
 cp .env.example .env
-docker compose --project-name contextboard up -d --wait
+docker compose --project-name projectpulse up -d --wait
 ```
 
 Preserve an existing `.env` instead of replacing it. The supplied database
@@ -44,7 +44,7 @@ npm ci
 npm run dev
 ```
 
-Open [ContextBoard](http://localhost:3000). Select Client Portal Modernization.
+Open [ProjectPulse](http://localhost:3000). Select Client Portal Modernization.
 The overview should show one active requirement, three confirmed decisions,
 one open commitment, one open risk and two follow-ups.
 
@@ -55,12 +55,12 @@ No AI provider key is required for Phases 0 and 1.
 ## Later starts and stops
 
 Start the database from the repository root with
-`docker compose --project-name contextboard up -d --wait`, then run the backend
+`docker compose --project-name projectpulse up -d --wait`, then run the backend
 and frontend commands in separate terminals. Install and migrate again only when
 dependencies or migrations change. Repeating the seed preserves existing edits.
 
 Use Ctrl+C in each application terminal to stop the frontend/backend. From the
-repository root, `docker compose --project-name contextboard stop` stops the
+repository root, `docker compose --project-name projectpulse stop` stops the
 database while keeping its data. Do not remove its volume as routine cleanup.
 
 ## Troubleshooting
@@ -72,6 +72,32 @@ database while keeping its data. Do not remove its volume as routine cleanup.
   `apps/web/.env.local`; the repository-root `.env` is not loaded by Next.js.
 - If port 3000 is occupied, stop the other server or use the URL printed by Next.js.
 - If Python is not installed, use `uv python install 3.12`, then retry `uv sync`.
+
+## Upgrading an existing local installation
+
+Keep your existing `.env` and its database credentials/name. Renaming the product
+does not require renaming a PostgreSQL role or database. Seed UUIDs are stable, so
+existing bookmarks, memberships and edited baseline records remain valid.
+
+Before changing the Compose project name to `projectpulse`, find the existing
+database's volume name in Docker Desktop (container details → mounts). Set
+`POSTGRES_DATA_VOLUME` in your existing `.env` to that exact volume name. Stop the
+old database container, then start the new Compose project using the commands above.
+This reuses the existing data instead of initializing another database. Do not
+delete the original volume or overwrite your `.env` with the new sample.
+
+Once a phase has merged, update your local source with `git fetch origin` followed
+by `git switch main` and `git pull --ff-only origin main`. Preserve any uncommitted
+local work before switching branches.
+
+## How people use the application
+
+ProjectPulse is a web application. Developers run the frontend/backend locally;
+after a hosted deployment, users open the application URL in a browser and select
+a project. The current version supports inspecting its baseline and follow-ups.
+Later phases add editing, transcript import and evidence-backed human review.
+Users will not need Node, Python or Docker to access a hosted version. A Windows
+executable is outside the current product plan.
 
 The current workspace is a local prototype with a fixed demo identity. State
 editing, transcript ingestion and AI review actions are not implemented yet.

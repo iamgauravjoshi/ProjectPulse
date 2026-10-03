@@ -9,7 +9,7 @@ test("workspace renders without browser errors on desktop and mobile", async ({
     if (message.type() === "error") errors.push(message.text());
   });
   await page.goto("/");
-  await expect(page).toHaveTitle("ContextBoard — Project workspace");
+  await expect(page).toHaveTitle("ProjectPulse — Project workspace");
   await expect(
     page.getByRole("heading", {
       level: 1,

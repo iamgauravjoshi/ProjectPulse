@@ -1,5 +1,8 @@
 # Current-state assessment
 
+Product and command examples use the current ProjectPulse naming. Historical
+executions used the original development identifiers before the product rename.
+
 Assessment date: 3 October 2026 (Asia/Calcutta).
 
 Checkpoint: Step 0.1 — repository assessment. This document records observed
@@ -7,7 +10,7 @@ state, not the proposed implementation.
 
 ## Product scope
 
-The supplied brief describes ContextBoard, a project intelligence and decision
+The supplied brief describes ProjectPulse, a project intelligence and decision
 reconciliation application. Its central rule is: **meetings are evidence; the
 project state is the truth**. Source evidence, AI interpretations, and
 human-confirmed canonical state must remain separate.
@@ -89,10 +92,10 @@ requests. Its cache/log path was outside the repository.
 
 | Check | Exact command | Exit | Result |
 | --- | --- | --- | --- |
-| Install | `npm ci --ignore-scripts --no-audit --no-fund --cache /tmp/contextboard-baseline-npm` | 1 | `EUSAGE`: no npm lockfile; nothing installed |
-| Build | `npm run build --cache /tmp/contextboard-baseline-npm` | 254 | `ENOENT`: no `package.json` |
-| Lint | `npm run lint --cache /tmp/contextboard-baseline-npm` | 254 | `ENOENT`: no `package.json` |
-| Existing tests | `npm run test --cache /tmp/contextboard-baseline-npm` | 254 | `ENOENT`: no `package.json`; no tests executed |
+| Install | `npm ci --ignore-scripts --no-audit --no-fund --cache /tmp/projectpulse-baseline-npm` | 1 | `EUSAGE`: no npm lockfile; nothing installed |
+| Build | `npm run build --cache /tmp/projectpulse-baseline-npm` | 254 | `ENOENT`: no `package.json` |
+| Lint | `npm run lint --cache /tmp/projectpulse-baseline-npm` | 254 | `ENOENT`: no `package.json` |
+| Existing tests | `npm run test --cache /tmp/projectpulse-baseline-npm` | 254 | `ENOENT`: no `package.json`; no tests executed |
 
 ### Pre-existing failures and blockers
 

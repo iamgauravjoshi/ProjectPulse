@@ -1,4 +1,4 @@
-# ContextBoard architecture
+# ProjectPulse architecture
 
 Status: Step 0.2 architecture decision, 3 October 2026. Application implementation
 begins in Step 0.3a. See [the phase plan](phase-0-plan.md),

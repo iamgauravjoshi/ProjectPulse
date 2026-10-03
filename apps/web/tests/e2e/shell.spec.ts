@@ -54,7 +54,7 @@ test("navigation is bookmarkable and the help dialog returns focus", async ({
   await decisions.click();
   await expect(page).toHaveURL(/view=decisions/);
   await expect(decisions).toHaveAttribute("aria-current", "page");
-  const help = page.getByRole("button", { name: "How ContextBoard works" });
+  const help = page.getByRole("button", { name: "How ProjectPulse works" });
   await help.click();
   await expect(page.getByRole("dialog")).toHaveAccessibleName(
     "From conversation to confirmed state",

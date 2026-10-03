@@ -1,4 +1,4 @@
-# ContextBoard
+# ProjectPulse
 
 Project intelligence and decision reconciliation. Meetings are evidence; the
 project state is the truth.
@@ -19,15 +19,20 @@ production authentication is implemented.
 
 ## Install and run
 
-To get the completed Phase 1 snapshot on your laptop:
+To get the latest completed phase on your laptop:
 
 ```sh
-git clone --branch phase/1-project-workspace-ui https://github.com/iamgauravjoshi/ProjectPulse.git
+git clone --branch main https://github.com/iamgauravjoshi/ProjectPulse.git
 cd ProjectPulse
 ```
 
 Follow the [local setup guide](docs/development/local-setup.md) for the complete
 first-time sequence. The commands below assume the database is already set up.
+
+ProjectPulse runs in a web browser. In development, open localhost; a later hosted
+deployment will provide a web URL. A Windows `.exe` is outside the current scope.
+The [working agreement](AGENTS.md) requires a push after every tested/documented
+step and a merge into `main` only after the entire phase is complete.
 
 Frontend, from `apps/web`:
 
@@ -57,7 +62,7 @@ From the repository root, for first-time local setup:
 
 ```sh
 cp .env.example .env
-docker compose --project-name contextboard up -d --wait
+docker compose --project-name projectpulse up -d --wait
 ```
 
 Preserve an existing `.env` instead of overwriting it. The sample password is for
@@ -81,19 +86,19 @@ It does not invent transcript evidence or AI results.
 Create a separate test database once, from the repository root:
 
 ```sh
-docker compose --project-name contextboard exec db createdb -U contextboard contextboard_test
+docker compose --project-name projectpulse exec db createdb -U projectpulse projectpulse_test
 ```
 
 Then, from `apps/api`:
 
 ```sh
-TEST_DATABASE_URL=postgresql+psycopg://contextboard:contextboard_local@127.0.0.1:54329/contextboard_test uv run pytest
+TEST_DATABASE_URL=postgresql+psycopg://projectpulse:projectpulse_local@127.0.0.1:54329/projectpulse_test uv run pytest
 ```
 
 Integration tests require an explicit database URL ending in `_test`, reject
 databases containing canonical records, and run
 migration rollback/reapply only there. Never point them at the development
-database. Stopping with `docker compose --project-name contextboard stop` preserves
+database. Stopping with `docker compose --project-name projectpulse stop` preserves
 local data; do not delete volumes as routine cleanup.
 
 ## Checks

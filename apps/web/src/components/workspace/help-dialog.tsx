@@ -17,7 +17,7 @@ export function HelpDialog() {
           type="button"
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-muted hover:bg-surface-muted hover:text-ink"
         >
-          <CircleHelp size={18} aria-hidden="true" /> How ContextBoard works
+          <CircleHelp size={18} aria-hidden="true" /> How ProjectPulse works
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

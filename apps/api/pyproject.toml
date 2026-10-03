@@ -1,5 +1,5 @@
 [project]
-name = "contextboard-api"
+name = "projectpulse-api"
 version = "0.1.0"
 description = "Project intelligence and decision reconciliation backend"
 requires-python = ">=3.12,<3.13"

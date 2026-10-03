@@ -9,16 +9,16 @@ jobs:
       postgres:
         image: pgvector/pgvector:0.8.1-pg17@sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21
         env:
-          POSTGRES_USER: contextboard
-          POSTGRES_PASSWORD: contextboard_ci
-          POSTGRES_DB: contextboard_test
+          POSTGRES_USER: projectpulse
+          POSTGRES_PASSWORD: projectpulse_ci
+          POSTGRES_DB: projectpulse_test
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U contextboard -d contextboard_test"
+          --health-cmd "pg_isready -U projectpulse -d projectpulse_test"
           --health-interval 3s --health-timeout 3s --health-retries 10
     env:
-      DATABASE_URL: postgresql+psycopg://contextboard:contextboard_ci@127.0.0.1:5432/contextboard_test
-      TEST_DATABASE_URL: postgresql+psycopg://contextboard:contextboard_ci@127.0.0.1:5432/contextboard_test
+      DATABASE_URL: postgresql+psycopg://projectpulse:projectpulse_ci@127.0.0.1:5432/projectpulse_test
+      TEST_DATABASE_URL: postgresql+psycopg://projectpulse:projectpulse_ci@127.0.0.1:5432/projectpulse_test
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
