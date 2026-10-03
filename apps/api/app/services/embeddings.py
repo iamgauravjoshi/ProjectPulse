@@ -23,13 +23,16 @@ class EmbeddingProvider(Protocol):
 
 
 def normalized_vector(values: Any) -> list[float]:
-    if (
-        not isinstance(values, list)
-        or len(values) != DIMENSIONS
-        or any(
-            isinstance(x, bool) or not isinstance(x, (float, int)) or not math.isfinite(x)
-            for x in values
+    if isinstance(values, list) and len(values) != DIMENSIONS:
+        raise StateError(
+            "EMBEDDING_INVALID",
+            f"Embedding provider returned {len(values)} dimensions; expected {DIMENSIONS}. "
+            "Update or restart the backend and retry indexing.",
+            503,
         )
+    if not isinstance(values, list) or any(
+        isinstance(x, bool) or not isinstance(x, (float, int)) or not math.isfinite(x)
+        for x in values
     ):
         raise StateError("EMBEDDING_INVALID", "Embedding provider returned invalid vectors.", 503)
     norm = math.sqrt(sum(float(x) * float(x) for x in values))
@@ -68,10 +71,9 @@ class GeminiEmbeddings:
                     {
                         "model": f"models/{MODEL}",
                         "content": {"parts": [{"text": text}]},
-                        "embedContentConfig": {
-                            "taskType": "RETRIEVAL_QUERY" if query else "RETRIEVAL_DOCUMENT",
-                            "outputDimensionality": DIMENSIONS,
-                        },
+                        # Batch REST fields belong to each request, as in the official SDK.
+                        "taskType": "RETRIEVAL_QUERY" if query else "RETRIEVAL_DOCUMENT",
+                        "outputDimensionality": DIMENSIONS,
                     }
                     for text in batch
                 ]

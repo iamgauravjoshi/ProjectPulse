@@ -151,3 +151,34 @@ Keep the draft phase PR unmerged and main unchanged until that live check passes
 No Phase 3 implementation has started. Turbopack's environment-specific socket EPERM
 remains documented; webpack production acceptance passed without changing the normal
 build command. CI still verifies the normal build on GitHub runners.
+
+## Indexing correction checkpoint — Laptop invalid-vector report
+
+User reported failed indexing for TXT/PDF after configuring a key on their laptop.
+The cloud executor remains separate and has no key/Google destination configured;
+local `.env` is sufficient for the laptop backend and requires process restart.
+
+Found a batch REST request mismatch: the adapter nested task/dimension configuration,
+while the official `google-genai` 2.28.0 serializer writes `taskType` and
+`outputDimensionality` directly on each `requests[]` entry. Corrected both document
+and query embeddings. Validation still strictly rejects incompatible/nonfinite/zero
+vectors; dimension mismatches now report safe actual/expected counts. No slicing,
+padding, fake vectors, database migration or document deletion was introduced.
+
+Regression transport now emulates 3072 defaults when the dimension field is missing,
+instead of returning 768 regardless of request shape. New real PostgreSQL scenarios
+for TXT and PDF retain failed evidence/chunks and successfully retry through the
+actual Gemini adapter with corrected synthetic responses. **165 backend tests pass**;
+Ruff lint/format and strict mypy (44 source files) pass. All **9 document/foundation
+browser regressions pass** against the updated backend. Frontend code is unchanged.
+
+Added the opt-in `uv run python -m app.check_gemini` diagnostic and a detailed
+[laptop setup/recovery guide](../development/gemini-setup.md). The probe checks
+both retrieval tasks using synthetic text and prints only key presence/source,
+model, dimensions and sanitized failure status. In this cloud executor it correctly
+reports missing configuration without sending a request. No SDK was added to the
+project dependencies; its serializer was inspected in an isolated temporary install.
+
+Live authentication/indexing/paraphrase verification must still run on the user's
+laptop (or a separately configured cloud runtime). Keep PR #2 draft and main unchanged
+until that succeeds; automated provider responses remain explicitly synthetic.

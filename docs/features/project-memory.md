@@ -183,7 +183,7 @@ Provider failures record safe status codes and permit explicit retry, with no
 partial/fabricated vector set or automatic repeated charges.
 
 Server-only `GEMINI_API_KEY` selects the user's chosen Gemini provider. The fixed
-`gemini-embedding-001` model uses current REST `embedContentConfig` fields,
+`gemini-embedding-001` model uses top-level batch REST `taskType`/`outputDimensionality` fields,
 RETRIEVAL_DOCUMENT/RETRIEVAL_QUERY tasks and output dimensionality 768. Each vector
 is checked for shape, finite values and nonzero norm, then normalized. Requests use
 `x-goog-api-key` headers, a fixed Google endpoint, batches of 16, bounded responses,
@@ -247,3 +247,15 @@ interpretations from retrieved evidence through human review; this feature does
 not infer or mutate baseline state.
 
 ![Purple context search showing separate baseline and evidence](images/memory-search-desktop.png)
+
+
+### Indexing request correction
+
+The laptop report of invalid vectors exposed a request-format bug: fields nested
+under `embedContentConfig` did not match the official Python SDK's batch serializer.
+The adapter now places `taskType` and `outputDimensionality` directly on each
+`requests[]` item. Tests emulate default 3072-dimensional responses when the dimension
+setting is missing, and verify TXT/PDF retries save actual 768-dimensional vectors.
+Strict validation remains in place, with informative actual/expected dimension errors.
+See the [Gemini laptop setup/recovery guide](../development/gemini-setup.md) and
+opt-in `uv run python -m app.check_gemini` probe. No schema or document reset is needed.

@@ -60,7 +60,12 @@ def test_gemini_contract_batches_document_and_query_tasks_and_normalizes(monkeyp
         assert request.get_header("X-goog-api-key") == "synthetic-contract-key" and timeout <= 8
         return BytesIO(
             json.dumps(
-                {"embeddings": [{"values": [2.0] * 768} for _ in payload["requests"]]}
+                {
+                    "embeddings": [
+                        {"values": [2.0] * item.get("outputDimensionality", 3072)}
+                        for item in payload["requests"]
+                    ]
+                }
             ).encode()
         )
 
@@ -70,12 +75,13 @@ def test_gemini_contract_batches_document_and_query_tasks_and_normalizes(monkeyp
         vectors = provider.embed(["text"] * 17)
         assert len(requests) == 2 and len(vectors) == 17
         assert math.isclose(sum(x * x for x in vectors[0]), 1)
-        assert requests[0]["requests"][0]["embedContentConfig"] == {
-            "taskType": "RETRIEVAL_DOCUMENT",
-            "outputDimensionality": 768,
-        }
+        for request in requests:
+            for item in request["requests"]:
+                assert item["taskType"] == "RETRIEVAL_DOCUMENT"
+                assert item["outputDimensionality"] == 768
+                assert "embedContentConfig" not in item
         provider.embed(["query"], query=True)
-        assert requests[-1]["requests"][0]["embedContentConfig"]["taskType"] == "RETRIEVAL_QUERY"
+        assert requests[-1]["requests"][0]["taskType"] == "RETRIEVAL_QUERY"
     finally:
         get_settings.cache_clear()
 
@@ -246,3 +252,60 @@ def test_deleted_document_is_not_resurrected_after_provider_returns(db_session, 
     assert client.post(f"{ROOT}/{doc['id']}/index").status_code == 404
     assert db_session.scalar(select(func.count()).select_from(Document)) == 0
     assert db_session.scalar(select(func.count()).select_from(DocumentChunk)) == 0
+
+
+def test_dimension_error_reports_only_sizes_not_vector_contents():
+    with pytest.raises(StateError) as error:
+        normalized_vector([0.25] * 3072)
+    assert error.value.code == "EMBEDDING_INVALID"
+    assert "3072 dimensions; expected 768" in error.value.message
+    assert "0.25" not in error.value.message
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize("extension", ["txt", "pdf"])
+def test_gemini_adapter_retries_existing_txt_pdf_after_dimension_failure(
+    db_session, indexed_client, monkeypatch, extension
+):
+    from test_documents import pdf_bytes
+
+    client, _ = indexed_client
+    monkeypatch.setenv("GEMINI_API_KEY", "synthetic-regression-key")
+    get_settings.cache_clear()
+    app.dependency_overrides[get_embedding_provider] = lambda: GeminiEmbeddings()
+    wrong_size = True
+
+    def send(request, timeout):
+        payload = json.loads(request.data)
+        assert all(item["taskType"] == "RETRIEVAL_DOCUMENT" for item in payload["requests"])
+        return BytesIO(
+            json.dumps(
+                {
+                    "embeddings": [
+                        {
+                            "values": [1.0]
+                            * (3072 if wrong_size else item.get("outputDimensionality", 3072))
+                        }
+                        for item in payload["requests"]
+                    ]
+                }
+            ).encode()
+        )
+
+    monkeypatch.setattr("app.services.embeddings.urlopen", send)
+    try:
+        raw = pdf_bytes() if extension == "pdf" else b"ProjectPulse text evidence regression."
+        doc = client.post(ROOT, params={"filename": f"scope.{extension}"}, content=raw).json()
+        response = client.post(f"{ROOT}/{doc['id']}/index")
+        assert response.status_code == 503
+        assert "3072 dimensions; expected 768" in response.json()["error"]["message"]
+        assert client.get(f"{ROOT}/{doc['id']}").json()["indexStatus"] == "FAILED"
+        assert all(x.embedding is None for x in db_session.scalars(select(DocumentChunk)))
+        wrong_size = False
+        response = client.post(f"{ROOT}/{doc['id']}/index")
+        assert response.status_code == 200, response.text
+        assert response.json()["indexStatus"] == "INDEXED"
+        assert response.json()["indexedChunks"] >= 1
+        assert all(len(x.embedding) == 768 for x in db_session.scalars(select(DocumentChunk)))
+    finally:
+        get_settings.cache_clear()

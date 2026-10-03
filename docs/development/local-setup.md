@@ -158,6 +158,10 @@ Upload does not change baseline truth. New decisions default to Discussion.
 
 ### Server-side Gemini setup
 
+For detailed laptop instructions and recovery from invalid-vector errors, see the
+[Gemini setup guide](gemini-setup.md). A laptop backend does not require Codex cloud
+secrets or a Codex network allowlist.
+
 Add `GEMINI_API_KEY=<your key>` to your existing root `.env` locally (never commit
 it or paste it into chat). The FastAPI server reads it; restart the backend after
 changing it. Do not create a `NEXT_PUBLIC_` variable for this key. The provider uses
