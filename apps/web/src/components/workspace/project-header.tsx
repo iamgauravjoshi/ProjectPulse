@@ -50,7 +50,7 @@ export function ProjectHeader({
               <span
                 key={member.id}
                 title={`${member.name} · ${humanLabel(member.role)}`}
-                className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-canvas bg-[#e4ece7] text-[13px] font-medium text-ink"
+                className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-canvas bg-accent-soft text-[13px] font-medium text-ink"
               >
                 {member.name[0]}
               </span>

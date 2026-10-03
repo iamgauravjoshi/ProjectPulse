@@ -3,7 +3,12 @@
 Project intelligence and decision reconciliation. Meetings are evidence; the
 project state is the truth.
 
-Phases 0 and 1 are complete. The workspace reads the seeded PostgreSQL project
+Phases 0, 1 and 2 are complete. Phase 2 adds audited manual editing, a document
+library, Gemini indexing and bounded context search in a purple theme. See the
+[project memory feature](docs/features/project-memory.md) and
+[Phase 2 results](docs/testing/phase-2-results.md).
+
+The workspace reads the seeded PostgreSQL project
 through FastAPI and displays its trusted baseline, stakeholders, delivery
 follow-ups and activity. Decisions, commitments and risks have searchable views;
 the review inbox separates recorded review requirements from delivery follow-ups.

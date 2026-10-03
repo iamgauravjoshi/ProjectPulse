@@ -11,9 +11,9 @@ export function Feedback({
   description: string;
   action?: React.ReactNode;
   icon?: LucideIcon;
-  headingLevel?: 1 | 2;
+  headingLevel?: 1 | 2 | 3;
 }) {
-  const Heading = headingLevel === 1 ? "h1" : "h2";
+  const Heading = headingLevel === 1 ? "h1" : headingLevel === 2 ? "h2" : "h3";
   return (
     <section className="mx-auto flex max-w-md flex-col items-center px-6 py-16 text-center">
       <div className="mb-5 rounded-xl bg-surface-muted p-3">
@@ -33,7 +33,7 @@ export function ErrorFeedback({
 }: {
   title: string;
   retry: () => void;
-  headingLevel?: 1 | 2;
+  headingLevel?: 1 | 2 | 3;
 }) {
   return (
     <Feedback

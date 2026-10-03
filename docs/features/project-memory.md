@@ -1,0 +1,263 @@
+# Canonical project memory
+
+Status: Phase 2 acceptance is complete. Automated checks passed on
+`phase/2-project-memory`; the user reported completing the documented live Gemini
+checks on their laptop. See the phase completion report for verification evidence.
+
+## Purpose and user problem
+
+Maintain a trusted, manually editable project baseline and retrieve relevant
+document evidence. Users need structured state before comparing future meeting
+statements with it. Documents remain evidence; uploads do not silently change truth.
+
+## Scope and checkpoints
+
+1. Theme checkpoint: switch shared tokens, avatars and favicon to purple; verify
+   text contrast and existing browser flows, document and push before CRUD work.
+2. Step 2.1: create/read/update/delete requirements, decisions, milestones, risks,
+   commitments and dependencies. First validate the scoped transactional API; then
+   implement the browser editor and feature E2E flow. Push each tested checkpoint.
+3. Step 2.2: validate/parse/store PDF, DOCX, TXT and Markdown documents; handle empty,
+   malformed, oversized and duplicate uploads, scoped lists and deletion.
+4. Step 2.3: provenance-preserving chunks and pgvector embeddings, provider interface,
+   model metadata and repeatable indexing without changing canonical records.
+5. Step 2.4: bounded project context search combining structured matches and semantic
+   document retrieval; return source locations and verify project isolation.
+
+## Acceptance criteria
+
+- Human-initiated CRUD covers all six required record types and persists on reload.
+- Backend membership checks precede every read/write; hidden/missing records share
+  the same response, and references cannot point into another project.
+- Writes and append-only audit events commit together; stale versions are rejected.
+- Invalid forms, unavailable backend, successful save and explicit delete confirmation
+  have clear UI feedback; new/edit dialogs support keyboard focus and Escape.
+- Confirmed decisions remain distinct from proposals; no AI-generated state is added.
+- Valid document uploads preserve page/section text and project/document identities.
+- Deleting a document removes its chunks/index entries; duplicates do not re-embed.
+- Context search is bounded, relevant, project-scoped and honest when embeddings
+  are unconfigured or unavailable. No fabricated vectors or relevance claims.
+- Full phase E2E and static/database checks pass before merge into `main`.
+
+## Non-goals
+
+No transcripts, event extraction, AI state mutation, governance automation, external
+task writes, production identity or executable desktop application in this phase.
+
+## Architecture
+
+FastAPI owns validation, membership checks, SQLAlchemy transactions, audit and
+document/search services. Next.js provides typed forms and thin same-origin transport.
+Domain logic lives outside React. Provider calls remain behind a backend interface;
+parsing uses open-source libraries, embeddings use configured server-side credentials.
+
+## Data model changes
+
+Manual CRUD uses existing canonical tables. Revisions `0003_documents` and
+`0004_chunks` add project documents, source-preserving chunks, hashes, vector fields
+and embedding metadata. Existing seed identities and edits are preserved.
+
+## API changes
+
+Project-scoped canonical write routes, then document upload/list/delete/index routes
+and bounded context search. Exact request contracts are recorded at each checkpoint.
+
+Step 2.1a implements `/api/v1/projects/{projectId}/state/{kind}` for the six
+whitelisted kinds: `requirements`, `decisions`, `milestones`, `risks`, `commitments`,
+`dependencies`. GET lists records; POST creates human baseline records. GET/PUT/
+DELETE at `/{recordId}` handle individual records. PUT accepts
+`{expectedVersion, values}` (complete editable fields), and DELETE requires the
+`expectedVersion` query parameter. Server-owned IDs, provenance, speaker/confidence,
+actor and confirmation timestamps cannot be submitted as editable fields.
+
+Create/edit/delete and their actor-attributed audit events commit together. Updates
+and deletes lock the row and reject stale versions with 409. Cross-project IDs are
+hidden; invalid references return 422. Referenced records cannot be deleted until
+their links are removed (409). Manual confirmation is explicit through the status;
+proposals remain unconfirmed. The local actor is still the seeded product owner.
+
+## UI changes
+
+Purple shared tokens and favicon; a manual project-state editor; document library;
+source-aware context search. Existing overview/attention views refresh after writes.
+
+## AI behavior
+
+Embeddings support retrieval only. Uploaded documents and search results cannot
+change canonical state. Live provider checks require a configured key and allowed
+network destination; mocked provider tests are reported separately from live results.
+
+## Edge cases
+
+Empty baseline, missing owners/dates, stale edits, constrained deletes, references
+outside a project, malformed/empty files, duplicate upload, parser failure, provider
+failure, incompatible embedding models and documents with no extractable text.
+
+## Security considerations
+
+Fixed local demo actor remains development-only. Never accept actor/source/version
+metadata as authoritative from the browser. Validate upload formats and bounded
+sizes, keep keys server-side, use fixed proxy destinations, and sanitize failures.
+Preserve existing local database credentials and volumes. No public deployment.
+
+## Testing performed
+
+Phase 1 was verified on the latest `main`: GitHub CI passed, including Windows
+dependency/audit checks. Current Phase 2 commands, results and regressions are in
+[phase-2-results.md](../testing/phase-2-results.md).
+
+## Known limitations
+
+Live embeddings require a server-side provider key. The user verified their laptop
+setup; this development cloud environment has no provider credentials, so its
+automated provider tests use synthetic responses. No production auth.
+
+## Future improvements
+
+Use this confirmed baseline and source-aware retrieval for transcript relevance,
+project deltas, evidence-backed review and decision governance in later phases.
+
+### Manual-state browser editor
+
+`view=state` is bookmarkable; `kind` selects one of the six record types. Create and
+edit dialogs expose only editable fields, with project-scoped relation options.
+Unassigned owners/dates stay unresolved. Decisions default to Discussion; explicit
+Confirmed establishes human truth. Delete asks for confirmation and retains audit
+history. The overview reloads persisted state after each successful mutation.
+Failures preserve the draft; stale versions offer an explicit reload before editing
+again. Mutation requests are never automatically retried. Radix dialogs trap focus,
+support Escape and restore focus; mobile forms scroll within the viewport.
+
+The same-origin Next transport checks incoming browser Origin against Host (Next
+may internally rewrite request URLs), validates UUID/kind/version and bounds JSON
+bodies to 64 KiB. Backend membership and field/reference/version checks remain the
+final authority. Authentication is still the fixed local demo member; production
+identity and deployment remain outside Phase 2.
+
+### Documents: storage, API and safeguards
+
+Migration `0003_documents` stores project-owned evidence: immutable content SHA-256,
+original bytes (PostgreSQL BYTEA), sanitized display filename, uploader, timestamps
+and parsed page/section/text segments (JSONB). This small local application avoids
+object-storage infrastructure; BYTEA is suitable only for the bounded demo budget.
+A unique `(project_id, content_hash)` prevents duplicates, including concurrent
+uploads. Upload and delete each append an atomic audit event; duplicate upload
+returns the existing document without another event. Canonical state is untouched.
+
+`GET/POST /api/v1/projects/{id}/documents` lists/uploads. POST sends raw file bytes
+with the filename query parameter, allowing streaming size enforcement before a
+multipart parser could spool arbitrary input. `GET/DELETE /documents/{documentId}`
+returns traceable extracted text or deletes evidence. Original binary bytes are
+retained but never exposed by the JSON API. UUIDs, membership and project ownership
+are checked; no filesystem extraction, path writes or client-supplied project scope.
+
+Parsers: pypdf (PDF pages), python-docx (headings/paragraphs/tables), UTF-8 decoding
+(TXT/Markdown headings). Limits: 5 MiB upload, 200,000 extracted characters, 200 PDF
+pages, bounded PDF stream decompression/page tree/form invocations, DOCX zip entry/
+expanded-size/compression-ratio limits. Encrypted, malformed, blank and image-only
+PDFs fail clearly. OCR, legacy `.doc`, rich rendering and unbounded files are outside
+scope. DOCX section headings are retained; page numbers are unavailable because DOCX
+pagination requires a rendering engine. Text is rendered as escaped text, never
+uploaded HTML. A document can be uploaded again after deletion; retained audit
+history records both events.
+
+`view=documents` provides upload progress, errors, duplicate feedback, a source-text
+viewer with page/section labels and explicit delete confirmation. Empty and retry
+states remain usable on mobile. Gemini indexing follows as a separate checkpoint.
+
+### Gemini chunk indexing
+
+`0004_chunks` adds document index status/error/count and project/document-owned
+`document_chunks`: page/section, raw text, chunk index, segment/start/end offsets,
+chunker version, `vector(768)` and embedding model. A composite document FK enforces
+scope and cascades chunks on deletion. Embedding/model nullability must match.
+
+New uploads persist up to 256 text chunks immediately (1,000 characters, 120
+overlap, bounded within each source segment); documents with excessive sections
+must be split. `POST /documents/{documentId}/index` explicitly embeds these chunks
+and lazily builds missing chunks for older documents.
+This also works for documents uploaded before the chunk migration. Chunks remain
+traceable when Gemini is unavailable; missing vectors stay NULL. External calls
+occur after releasing database locks. The final complete vector set and index
+status/audit are saved atomically after rechecking document existence/ownership.
+Repeated indexing skips already indexed chunks; duplicate upload retains the index.
+Provider failures record safe status codes and permit explicit retry, with no
+partial/fabricated vector set or automatic repeated charges.
+
+Server-only `GEMINI_API_KEY` selects the user's chosen Gemini provider. The fixed
+`gemini-embedding-001` model uses top-level batch REST `taskType`/`outputDimensionality` fields,
+RETRIEVAL_DOCUMENT/RETRIEVAL_QUERY tasks and output dimensionality 768. Each vector
+is checked for shape, finite values and nonzero norm, then normalized. Requests use
+`x-goog-api-key` headers, a fixed Google endpoint, batches of 16, bounded responses,
+per-request timeout and a 30-second total call budget. No key is logged, returned
+or placed in browser variables. The runtime must allow Google's API destination.
+
+References checked with Firecrawl on 2026-10-03:
+[Google embeddings guide](https://ai.google.dev/gemini-api/docs/embeddings) and
+[REST embedding contract](https://ai.google.dev/api/embeddings). The guide now also
+lists Gemini Embedding 2; this text-only implementation uses the still-documented
+001 model and records its model identity on every vector.
+
+The library exposes an explicit Index action and pending/indexed/failed/unavailable
+states. A missing key does not block upload/read/manual state. Automated provider
+contract tests use synthetic vectors; PostgreSQL storage is real. Browser tests
+force an empty key to avoid external charges. **Live Gemini indexing is unverified**
+in this environment, which currently has no secret binding or Google API egress.
+
+### Bounded context search
+
+Internal `searchProjectContext(projectId, query)` aliases the Python service
+`search_project_context`; the scoped read API is
+`GET /api/v1/projects/{id}/context/search?query=...&limit=8`.
+Queries contain 1–400 characters; limit is 1–8. Up to eight distinct content terms
+are used in parameterized lexical predicates, with common question words removed.
+Each record category fetches at most eight candidates. Evidence lexical/cosine
+queries fetch at most sixteen candidates each; excerpts are at most 600 characters.
+Rank fusion combines text and vector candidates with at most two chunks per document.
+No complete project history is sent to Gemini: indexing sends bounded individual
+chunks; search sends only the query text. Membership is checked again and current
+baseline/evidence is read after any external call, avoiding stale truth captured
+before a slow query embedding.
+
+Structured matches include active requirements, confirmed decisions, active delivery
+milestones/commitments, open risks and dependencies. Discussion/proposal/provisional/
+review-required/rejected/superseded decisions cannot appear as confirmed truth.
+Evidence includes project/document/chunk identifiers, page/section, source segment
+and offsets. JSON distinguishes `canonical: true` baseline from `canonical: false`
+evidence, independently of document wording. The browser validates scope and this
+union before displaying results and links to the baseline or original source text.
+
+Semantic retrieval uses PostgreSQL cosine distance under the exact project/model/
+indexed-state filters, with a distance cutoff of 0.6; unrelated vectors are omitted.
+The UI reports ready/unavailable/not-indexed/failed semantic state distinctly.
+Unconfigured/failed semantic calls return actual text matches, with no invented
+similarity scores. Empty, loading, error/retry, responsive layout and source links
+are covered by browser tests. Search never writes canonical state or audit events.
+
+### Known limitations and future work
+
+The user reported completing live indexing/paraphrase/source verification on their
+laptop; this is separate from automated tests and is not a broad relevance benchmark.
+Exact cosine scans and bounded LIKE queries suit this local dataset; larger deployments need
+project-aware ANN/FTS indexes and measured relevance tuning. The 0.6 distance cutoff
+is an initial conservative heuristic, not a verified semantic-quality guarantee.
+There is no background indexing worker, OCR, production login, upload antivirus
+service, automatic decision extraction or desktop executable. BYTEA storage and
+fixed demo identity are local-prototype choices. Documents uploaded before the
+chunk feature gain text chunks on explicit indexing. Later phases may build
+interpretations from retrieved evidence through human review; this feature does
+not infer or mutate baseline state.
+
+![Purple context search showing separate baseline and evidence](images/memory-search-desktop.png)
+
+
+### Indexing request correction
+
+The laptop report of invalid vectors exposed a request-format bug: fields nested
+under `embedContentConfig` did not match the official Python SDK's batch serializer.
+The adapter now places `taskType` and `outputDimensionality` directly on each
+`requests[]` item. Tests emulate default 3072-dimensional responses when the dimension
+setting is missing, and verify TXT/PDF retries save actual 768-dimensional vectors.
+Strict validation remains in place, with informative actual/expected dimension errors.
+See the [Gemini laptop setup/recovery guide](../development/gemini-setup.md) and
+opt-in `uv run python -m app.check_gemini` probe. No schema or document reset is needed.

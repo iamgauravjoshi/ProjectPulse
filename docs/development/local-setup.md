@@ -124,12 +124,62 @@ local work before switching branches.
 
 ProjectPulse is a web application. Developers run the frontend/backend locally;
 after a hosted deployment, users open the application URL in a browser and select
-a project. The current version supports inspecting its baseline and follow-ups.
-Later phases add editing, transcript import and evidence-backed human review.
+a project. The completed Phase 1 version supports inspecting its baseline and follow-ups.
+The Phase 2 branch adds manual editing, document upload and source-aware context
+search. Later phases add transcript import and evidence-backed human review.
 Users will not need Node, Python or Docker to access a hosted version. A Windows
 executable is outside the current product plan.
 
-The current workspace is a local prototype with a fixed demo identity. State
-editing, transcript ingestion and AI review actions are not implemented yet.
+The current workspace is a local prototype with a fixed demo identity. Transcript ingestion and AI review actions are outside Phase 2.
 See the [Phase 1 report](../testing/phase-1-results.md) and
 [test commands](../../README.md#checks).
+
+
+## Updating to completed Phase 2
+
+Phase 2 is available on `main`; `phase/2-project-memory` is retained for history.
+Update an existing clean checkout:
+
+```sh
+git fetch origin
+git switch main
+git pull --ff-only origin main
+```
+
+Then run `uv sync --frozen` and `uv run alembic upgrade head` from `apps/api`,
+`npm ci` from `apps/web`, and restart both servers using the commands above.
+Keep the existing root `.env`, credentials and database volume. The additive
+migrations preserve canonical records. Do not downgrade a populated database;
+downgrade tests use only a disposable database ending in `_test`.
+
+Open the browser at `http://127.0.0.1:3000`. Use **Project state** for audited manual
+CRUD, **Documents** to upload/read/delete evidence, and **Context search** for a
+bounded mix of current baseline facts and document excerpts with source links.
+Upload does not change baseline truth. New decisions default to Discussion.
+
+### Server-side Gemini setup
+
+For detailed laptop instructions and recovery from invalid-vector errors, see the
+[Gemini setup guide](gemini-setup.md). A laptop backend does not require Codex cloud
+secrets or a Codex network allowlist.
+
+Add `GEMINI_API_KEY=<your key>` to your existing root `.env` locally (never commit
+it or paste it into chat). The FastAPI server reads it; restart the backend after
+changing it. Do not create a `NEXT_PUBLIC_` variable for this key. The provider uses
+`gemini-embedding-001`, 768 dimensions and a fixed Google REST endpoint. In a
+restricted cloud runtime, configure outbound HTTP access to
+`generativelanguage.googleapis.com` through that runtime's supported configuration
+workflow; changing a local policy file cannot grant access.
+
+In Documents, upload a small readable document and click **Index**. Expect
+`indexed` with a positive chunk count. Search for a paraphrase of a distinctive
+sentence in Context search; expect **Text and semantic search** and a citation
+back to the original page/section. Verify the source text and confirm no baseline
+fact changed. These checks verify Gemini configuration on your installation.
+Without a key, upload/read/manual editing and text search still work; the app
+explicitly reports semantic search/indexing as unavailable. Automated browser tests
+force an empty key, while provider contract tests use synthetic responses.
+
+If this cloud environment's Turbopack build fails with a socket EPERM, use the
+supported production builder `npm run build -- --webpack` from `apps/web`. The
+standard build remains unchanged for normal local and GitHub runners.

@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-canvas: #f7f9f8;
-  --color-ink: #25332e;
-  --color-muted: #66736d;
-  --color-line: #e3e9e5;
-  --color-accent: #1b6650;
-  --color-accent-soft: #edf5f0;
-  --color-surface-muted: #f2f5f3;
+  --color-canvas: #faf9fc;
+  --color-ink: #2e293d;
+  --color-muted: #71697d;
+  --color-line: #e7e2ef;
+  --color-accent: #6d28d9;
+  --color-accent-soft: #f2edfc;
+  --color-surface-muted: #f5f2f9;
 }
 
 :root {
