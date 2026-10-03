@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from app.api.context_search import router as context_router
 from app.api.documents import router as documents_router
 from app.api.health import router as health_router
 from app.api.manual_state import router as manual_state_router
@@ -10,6 +11,7 @@ from app.domain.manual_state import StateError
 
 app = FastAPI(title="ProjectPulse API", version="0.1.0")
 app.include_router(health_router)
+app.include_router(context_router)
 app.include_router(documents_router)
 app.include_router(projects_router)
 app.include_router(manual_state_router)

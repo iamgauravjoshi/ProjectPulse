@@ -65,6 +65,7 @@ export function StateEditor({
         {workspace[kind].map((record) => (
           <article
             key={record.id}
+            id={record.id}
             className="flex flex-wrap items-center justify-between gap-4 py-4"
           >
             <div>

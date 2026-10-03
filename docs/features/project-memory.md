@@ -1,6 +1,7 @@
 # Canonical project memory
 
-Status: Phase 2 started on `phase/2-project-memory`, based on verified Phase 1.
+Status: Phase 2 implementation is tested on `phase/2-project-memory`. Live Gemini
+acceptance is pending; the phase has not been merged into `main`.
 
 ## Purpose and user problem
 
@@ -51,9 +52,9 @@ parsing uses open-source libraries, embeddings use configured server-side creden
 
 ## Data model changes
 
-Manual CRUD uses existing canonical tables. Later steps add project documents and
-source-preserving chunks, content hashes, vector fields and embedding model metadata
-through explicit Alembic revisions. Existing seed identities and edits are preserved.
+Manual CRUD uses existing canonical tables. Revisions `0003_documents` and
+`0004_chunks` add project documents, source-preserving chunks, hashes, vector fields
+and embedding metadata. Existing seed identities and edits are preserved.
 
 ## API changes
 
@@ -200,3 +201,49 @@ states. A missing key does not block upload/read/manual state. Automated provide
 contract tests use synthetic vectors; PostgreSQL storage is real. Browser tests
 force an empty key to avoid external charges. **Live Gemini indexing is unverified**
 in this environment, which currently has no secret binding or Google API egress.
+
+### Bounded context search
+
+Internal `searchProjectContext(projectId, query)` aliases the Python service
+`search_project_context`; the scoped read API is
+`GET /api/v1/projects/{id}/context/search?query=...&limit=8`.
+Queries contain 1–400 characters; limit is 1–8. Up to eight distinct content terms
+are used in parameterized lexical predicates, with common question words removed.
+Each record category fetches at most eight candidates. Evidence lexical/cosine
+queries fetch at most sixteen candidates each; excerpts are at most 600 characters.
+Rank fusion combines text and vector candidates with at most two chunks per document.
+No complete project history is sent to Gemini: indexing sends bounded individual
+chunks; search sends only the query text. Membership is checked again and current
+baseline/evidence is read after any external call, avoiding stale truth captured
+before a slow query embedding.
+
+Structured matches include active requirements, confirmed decisions, active delivery
+milestones/commitments, open risks and dependencies. Discussion/proposal/provisional/
+review-required/rejected/superseded decisions cannot appear as confirmed truth.
+Evidence includes project/document/chunk identifiers, page/section, source segment
+and offsets. JSON distinguishes `canonical: true` baseline from `canonical: false`
+evidence, independently of document wording. The browser validates scope and this
+union before displaying results and links to the baseline or original source text.
+
+Semantic retrieval uses PostgreSQL cosine distance under the exact project/model/
+indexed-state filters, with a distance cutoff of 0.6; unrelated vectors are omitted.
+The UI reports ready/unavailable/not-indexed/failed semantic state distinctly.
+Unconfigured/failed semantic calls return actual text matches, with no invented
+similarity scores. Empty, loading, error/retry, responsive layout and source links
+are covered by browser tests. Search never writes canonical state or audit events.
+
+### Known limitations and future work
+
+Live Gemini quality/credentials/network acceptance remains pending; do not merge
+Phase 2 until the documented live indexing/paraphrase search succeeds. Exact cosine
+scans and bounded LIKE queries suit this local dataset; larger deployments need
+project-aware ANN/FTS indexes and measured relevance tuning. The 0.6 distance cutoff
+is an initial conservative heuristic, not a verified semantic-quality guarantee.
+There is no background indexing worker, OCR, production login, upload antivirus
+service, automatic decision extraction or desktop executable. BYTEA storage and
+fixed demo identity are local-prototype choices. Documents uploaded before the
+chunk feature gain text chunks on explicit indexing. Later phases may build
+interpretations from retrieved evidence through human review; this feature does
+not infer or mutate baseline state.
+
+![Purple context search showing separate baseline and evidence](images/memory-search-desktop.png)

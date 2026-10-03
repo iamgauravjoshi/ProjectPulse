@@ -1,5 +1,6 @@
 "use client";
 import * as Dialog from "@radix-ui/react-dialog";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 import {
   detailSchema,
@@ -11,6 +12,8 @@ import {
 import { useResource } from "../../features/workspace/use-resource";
 import { ErrorFeedback } from "../workspace/feedback";
 export function DocumentLibrary({ projectId }: { projectId: string }) {
+  const params = useSearchParams();
+  const router = useRouter();
   const load = useCallback(
     (signal: AbortSignal) => loadDocuments(projectId, signal),
     [projectId],
@@ -20,10 +23,25 @@ export function DocumentLibrary({ projectId }: { projectId: string }) {
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [target, setTarget] = useState<{
+  const [manualTarget, setTarget] = useState<{
     doc: DocumentSummary;
     remove: boolean;
   } | null>(null);
+  const linked =
+    resource.status === "ready"
+      ? resource.data.find((x) => x.id === params.get("document"))
+      : undefined;
+  const target =
+    manualTarget ?? (linked ? { doc: linked, remove: false } : null);
+  function close() {
+    setTarget(null);
+    if (params.has("document")) {
+      const next = new URLSearchParams(params.toString());
+      next.delete("document");
+      next.delete("segment");
+      router.replace(`/?${next}`);
+    }
+  }
   async function index(doc: DocumentSummary) {
     setPending(true);
     setError("");
@@ -188,7 +206,8 @@ export function DocumentLibrary({ projectId }: { projectId: string }) {
           key={target.doc.id}
           projectId={projectId}
           target={target}
-          close={() => setTarget(null)}
+          close={close}
+          segment={Number(params.get("segment") ?? 0)}
           changed={() => {
             setTarget(null);
             setMessage("Document deleted. Audit history is retained.");
@@ -204,12 +223,15 @@ function DocumentDialog({
   target,
   close,
   changed,
+  segment: selectedSegment,
 }: {
   projectId: string;
   target: { doc: DocumentSummary; remove: boolean };
   close: () => void;
   changed: () => void;
+  segment: number;
 }) {
+  const heading = useRef<HTMLHeadingElement>(null);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const load = useCallback(
@@ -249,8 +271,18 @@ function DocumentDialog({
     >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/30" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[85dvh] w-[calc(100%-32px)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-xl">
-          <Dialog.Title className="break-all text-lg font-semibold">
+        <Dialog.Content
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            heading.current?.focus();
+          }}
+          className="fixed left-1/2 top-1/2 z-50 max-h-[85dvh] w-[calc(100%-32px)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
+        >
+          <Dialog.Title
+            tabIndex={-1}
+            ref={heading}
+            className="break-all text-lg font-semibold"
+          >
             {target.remove ? "Delete document" : target.doc.filename}
           </Dialog.Title>
           <Dialog.Description className="mt-2 text-sm text-muted">
@@ -269,7 +301,14 @@ function DocumentDialog({
               />
             ) : (
               resource.data.segments.map((segment, index) => (
-                <div key={index} className="my-5">
+                <div
+                  key={index}
+                  ref={(element) => {
+                    if (index === selectedSegment)
+                      element?.scrollIntoView({ block: "center" });
+                  }}
+                  className="my-5"
+                >
                   <p className="text-xs font-medium text-accent">
                     {segment.page
                       ? `Page ${segment.page}`

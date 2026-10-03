@@ -11,7 +11,10 @@ for (const extension of ["txt", "md", "pdf", "docx"])
     const filename = `Browser ${randomUUID()}.${extension}`;
     const content =
       extension === "pdf" || extension === "docx"
-        ? readFileSync(`tests/fixtures/documents/scope.${extension}`)
+        ? Buffer.concat([
+            readFileSync(`tests/fixtures/documents/scope.${extension}`),
+            Buffer.from(`\n% Synthetic browser case ${randomUUID()}\n`),
+          ])
         : Buffer.from(`# Scope\nSynthetic project scope ${randomUUID()}`);
     let id: string | undefined;
     try {

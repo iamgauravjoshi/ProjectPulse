@@ -105,3 +105,49 @@ Live Gemini acceptance remains **pending**: no server key or Google API egress i
 configured. Synthetic provider tests are not a live semantic-quality verification.
 Keep Phase 2 off main until remaining search and live integration acceptance are
 complete. Next implementation checkpoint: Step 2.4 bounded context search.
+
+## STEP 2.4 IMPLEMENTED — Bounded project context search
+
+Implemented internal `searchProjectContext` and a scoped read endpoint, parameterized
+current-state text retrieval, actual PostgreSQL cosine retrieval, rank fusion,
+model/project/index filters, bounded candidates/excerpts/results and source offsets.
+Confirmed decisions remain distinct from other decision states and evidence. Current
+baseline/evidence and membership are read after the external query call. No full
+project history reaches Gemini, and search performs no state/audit write.
+
+UI: bookmarkable context view, loading/error/retry/empty feedback, explicit semantic
+status, separate baseline/evidence cards and links to current records/original source
+sections. Queries persist on error; invalid/cross-project payloads are rejected.
+Source viewers scroll to cited sections. Synthetic PDF/DOCX browser inputs are made
+unique per run so duplicate testing cannot remove a previously uploaded fixture.
+
+Validation: **162 backend tests passed**, including 14 new retrieval scenarios.
+These cover real cosine nearest neighbors and irrelevant-vector exclusion, other
+projects, current confirmed state, text search before indexing, deleted evidence,
+provider fallback, no charge without indexed vectors, query/result/excerpt budgets,
+per-document diversity and state changes during a slow query embedding. Ruff checks,
+strict mypy and Alembic drift check pass. **37 frontend unit tests and all 37 browser
+tests passed**, including the full manual baseline → upload → unavailable indexing →
+search → citation → baseline flow and cleanup. Frontend lint/type/format and
+production webpack build pass. Full npm audit reports **0 vulnerabilities**.
+
+The final context source anchor and feedback presentation received focused follow-up
+browser/static checks; screenshots use synthetic temporary records and are inspected
+on desktop/mobile. Setup docs explain phase checkout, additive migrations, browser
+usage, server-only Gemini credentials and the remaining live acceptance procedure.
+
+## Phase acceptance status — NOT MERGED
+
+All implemented Phase 2 paths pass automated acceptance/regression checks. Gemini
+provider contract/vector retrieval tests use synthetic provider responses and real
+PostgreSQL; they do **not** establish live Gemini quality or successful authentication.
+This cloud runtime reports no secret bindings and restricted package-manager-only
+HTTP destinations. To close the phase, configure `GEMINI_API_KEY` server-side and
+allow `generativelanguage.googleapis.com`, restart the API, then successfully index a
+small document and retrieve a relevant paraphrase with a verified source citation.
+No baseline state may change. The exact procedure is in the local setup guide.
+
+Keep the draft phase PR unmerged and main unchanged until that live check passes.
+No Phase 3 implementation has started. Turbopack's environment-specific socket EPERM
+remains documented; webpack production acceptance passed without changing the normal
+build command. CI still verifies the normal build on GitHub runners.
