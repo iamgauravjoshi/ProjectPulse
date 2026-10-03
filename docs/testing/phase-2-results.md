@@ -81,3 +81,27 @@ fixed that case; all **6 document browser cases passed** on the corrected build,
 with the other 27 regression cases already passing. The stream-size guard was
 strengthened to check incoming chunk size before accumulation; all 26 document
 backend cases passed again. Next: Step 2.3 chunks and Gemini indexing.
+
+## STEP 2.3 IMPLEMENTED — Gemini vector indexing
+
+Added reversible `0004_chunks`, 768-dimensional pgvector storage, source offsets/
+page/section metadata, immediate text chunks on new uploads, bounded Gemini REST
+provider and explicit indexing UI. Older documents lazily gain chunks when indexed.
+Missing key/provider errors retain NULL vectors and honest unavailable/failed status;
+retry is explicit. Identical uploads/indexing reuse prior state; deleting evidence
+cascades chunks. Provider calls release database locks; deletion during the call
+cannot resurrect evidence. Complete vectors/status/index audit save atomically.
+
+Checks: **148 backend tests passed** (19 new chunk/provider/vector scenarios), Ruff
+lint/format and strict mypy pass. Provider contract tests verify batching, modern
+REST config fields, tasks, dimensions, normalization and safe failures with synthetic
+responses. Actual PostgreSQL verifies vectors, scope, cascade, retries, schema
+metadata and rollback. All 35 frontend unit tests/static checks and webpack build
+pass; **9 document/foundation browser checks pass**, including real unavailable
+indexing while evidence remains readable. Browser API explicitly receives an empty
+key so automatic tests do not incur external calls.
+
+Live Gemini acceptance remains **pending**: no server key or Google API egress is
+configured. Synthetic provider tests are not a live semantic-quality verification.
+Keep Phase 2 off main until remaining search and live integration acceptance are
+complete. Next implementation checkpoint: Step 2.4 bounded context search.

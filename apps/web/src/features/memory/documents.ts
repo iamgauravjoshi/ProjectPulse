@@ -8,6 +8,9 @@ export const documentSchema = z.object({
   createdAt: z.iso.datetime({ offset: true }),
   uploadedBy: z.uuid(),
   duplicate: z.boolean(),
+  indexStatus: z.enum(["PENDING", "INDEXED", "FAILED", "UNAVAILABLE"]),
+  indexError: z.string().nullable(),
+  indexedChunks: z.number().int().nonnegative(),
   segmentCount: z.number().int().nonnegative(),
 });
 export const detailSchema = documentSchema.extend({

@@ -161,3 +161,42 @@ history records both events.
 `view=documents` provides upload progress, errors, duplicate feedback, a source-text
 viewer with page/section labels and explicit delete confirmation. Empty and retry
 states remain usable on mobile. Gemini indexing follows as a separate checkpoint.
+
+### Gemini chunk indexing
+
+`0004_chunks` adds document index status/error/count and project/document-owned
+`document_chunks`: page/section, raw text, chunk index, segment/start/end offsets,
+chunker version, `vector(768)` and embedding model. A composite document FK enforces
+scope and cascades chunks on deletion. Embedding/model nullability must match.
+
+New uploads persist up to 256 text chunks immediately (1,000 characters, 120
+overlap, bounded within each source segment); documents with excessive sections
+must be split. `POST /documents/{documentId}/index` explicitly embeds these chunks
+and lazily builds missing chunks for older documents.
+This also works for documents uploaded before the chunk migration. Chunks remain
+traceable when Gemini is unavailable; missing vectors stay NULL. External calls
+occur after releasing database locks. The final complete vector set and index
+status/audit are saved atomically after rechecking document existence/ownership.
+Repeated indexing skips already indexed chunks; duplicate upload retains the index.
+Provider failures record safe status codes and permit explicit retry, with no
+partial/fabricated vector set or automatic repeated charges.
+
+Server-only `GEMINI_API_KEY` selects the user's chosen Gemini provider. The fixed
+`gemini-embedding-001` model uses current REST `embedContentConfig` fields,
+RETRIEVAL_DOCUMENT/RETRIEVAL_QUERY tasks and output dimensionality 768. Each vector
+is checked for shape, finite values and nonzero norm, then normalized. Requests use
+`x-goog-api-key` headers, a fixed Google endpoint, batches of 16, bounded responses,
+per-request timeout and a 30-second total call budget. No key is logged, returned
+or placed in browser variables. The runtime must allow Google's API destination.
+
+References checked with Firecrawl on 2026-10-03:
+[Google embeddings guide](https://ai.google.dev/gemini-api/docs/embeddings) and
+[REST embedding contract](https://ai.google.dev/api/embeddings). The guide now also
+lists Gemini Embedding 2; this text-only implementation uses the still-documented
+001 model and records its model identity on every vector.
+
+The library exposes an explicit Index action and pending/indexed/failed/unavailable
+states. A missing key does not block upload/read/manual state. Automated provider
+contract tests use synthetic vectors; PostgreSQL storage is real. Browser tests
+force an empty key to avoid external charges. **Live Gemini indexing is unverified**
+in this environment, which currently has no secret binding or Google API egress.

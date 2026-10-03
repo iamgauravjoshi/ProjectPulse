@@ -9,6 +9,8 @@ from app.api.dependencies import get_database_session
 from app.domain.document_parse import MAX_BYTES
 from app.domain.manual_state import StateError
 from app.services import documents
+from app.services.document_index import index_document
+from app.services.embeddings import EmbeddingProvider, get_embedding_provider
 from app.services.project_access import require_project_access
 
 router = APIRouter(prefix="/api/v1/projects/{project_id}/documents", tags=["documents"])
@@ -49,3 +51,13 @@ def get_document(project_id: UUID, document_id: UUID, session: Database) -> dict
 def delete_document(project_id: UUID, document_id: UUID, session: Database) -> Response:
     documents.delete_document(session, project_id, document_id)
     return Response(status_code=204)
+
+
+@router.post("/{document_id}/index")
+def index(
+    project_id: UUID,
+    document_id: UUID,
+    session: Database,
+    provider: Annotated[EmbeddingProvider, Depends(get_embedding_provider)],
+) -> dict[str, Any]:
+    return index_document(session, project_id, document_id, provider)

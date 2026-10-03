@@ -54,7 +54,7 @@ export async function proxyEvidence(
           : undefined,
         cache: "no-store",
         redirect: "error",
-        signal: AbortSignal.timeout(20000),
+        signal: AbortSignal.timeout(path.endsWith("/index") ? 40000 : 20000),
       },
     );
     return response.status === 204

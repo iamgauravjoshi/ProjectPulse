@@ -108,3 +108,35 @@ test("empty mobile library fits the viewport and failed loading retries", async 
     ),
   ).toBeTruthy();
 });
+
+test("missing Gemini configuration shows unavailable indexing and retains readable evidence", async ({
+  page,
+  request,
+}) => {
+  const name = `Unindexed ${randomUUID()}.txt`;
+  let id: string | undefined;
+  try {
+    const doc = await (
+      await request.post(`${root}?filename=${encodeURIComponent(name)}`, {
+        data: `Synthetic evidence ${randomUUID()}`,
+      })
+    ).json();
+    id = doc.id;
+    await page.goto("/?view=documents");
+    await page
+      .getByRole("button", { name: `Index ${name}`, exact: true })
+      .click();
+    await expect(
+      page.getByRole("alert", { name: "Library error" }),
+    ).toContainText("Configure GEMINI_API_KEY");
+    await expect(
+      page.getByRole("heading", { name, exact: true }).locator(".."),
+    ).toContainText("Index: unavailable");
+    await page
+      .getByRole("button", { name: `Read ${name}`, exact: true })
+      .click();
+    await expect(page.getByRole("dialog")).toContainText("Synthetic evidence");
+  } finally {
+    if (id) await request.delete(`${root}/${id}`);
+  }
+});

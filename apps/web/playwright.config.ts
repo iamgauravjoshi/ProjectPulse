@@ -30,6 +30,7 @@ export default defineConfig({
       command:
         "uv run --frozen --offline uvicorn app.main:app --host 127.0.0.1 --port 8010",
       cwd: path.resolve(__dirname, "../api"),
+      env: { GEMINI_API_KEY: "" },
       url: "http://127.0.0.1:8010/health/live",
       reuseExistingServer: false,
     },

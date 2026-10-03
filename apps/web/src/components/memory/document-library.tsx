@@ -24,6 +24,29 @@ export function DocumentLibrary({ projectId }: { projectId: string }) {
     doc: DocumentSummary;
     remove: boolean;
   } | null>(null);
+  async function index(doc: DocumentSummary) {
+    setPending(true);
+    setError("");
+    setMessage("");
+    try {
+      const result = documentSchema.parse(
+        await memoryRequest(
+          `/api/workspace/projects/${projectId}/documents/${doc.id}/index`,
+          { method: "POST" },
+        ),
+      );
+      if (result.projectId !== projectId || result.id !== doc.id)
+        throw new Error("Unexpected project evidence.");
+      setMessage(
+        `Document indexed: ${result.indexedChunks} chunks. Canonical state is unchanged.`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Indexing failed.");
+    } finally {
+      setPending(false);
+      resource.reload();
+    }
+  }
   async function upload(event: React.FormEvent) {
     event.preventDefault();
     const file = input.current?.files?.[0];
@@ -128,8 +151,21 @@ export function DocumentLibrary({ projectId }: { projectId: string }) {
                   {doc.format.toUpperCase()} · {doc.byteSize} bytes ·{" "}
                   {doc.segmentCount} text sections · Evidence
                 </p>
+                <p className="mt-1 text-xs text-muted">
+                  Index: {doc.indexStatus.toLowerCase()}{" "}
+                  {doc.indexedChunks > 0
+                    ? `· ${doc.indexedChunks} Gemini chunks`
+                    : ""}
+                </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <button
+                  className="button-secondary"
+                  disabled={pending || doc.indexStatus === "INDEXED"}
+                  onClick={() => index(doc)}
+                >
+                  Index<span className="sr-only"> {doc.filename}</span>
+                </button>
                 <button
                   className="button-secondary"
                   onClick={() => setTarget({ doc, remove: false })}

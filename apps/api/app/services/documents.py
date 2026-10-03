@@ -6,7 +6,8 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.db.models import AuditEvent, Document
+from app.db.models import AuditEvent, Document, DocumentChunk
+from app.domain.chunks import chunk_segments
 from app.domain.document_parse import parse_document
 from app.domain.manual_state import StateError
 from app.repositories.audit import AuditRepository
@@ -26,6 +27,9 @@ def document_view(
         "uploadedBy": str(doc.uploaded_by),
         "duplicate": duplicate,
         "segmentCount": len(doc.segments),
+        "indexStatus": doc.index_status,
+        "indexError": doc.index_error,
+        "indexedChunks": doc.indexed_chunks,
     }
     if detail:
         view["segments"] = doc.segments
@@ -70,6 +74,12 @@ def upload_document(
         return document_view(existing, duplicate=True)
     name, extension, segments = parse_document(filename, raw)
     try:
+        specs = chunk_segments(segments)
+    except ValueError:
+        raise StateError(
+            "CHUNK_BUDGET", "Document has too many sections. Split it before uploading."
+        ) from None
+    try:
         with session.begin_nested():
             doc = Document(
                 project_id=project_id,
@@ -83,6 +93,9 @@ def upload_document(
             )
             session.add(doc)
             session.flush()
+            session.add_all(
+                [DocumentChunk(project_id=project_id, document_id=doc.id, **spec) for spec in specs]
+            )
             AuditRepository(session, project_id).append(
                 AuditEvent(
                     project_id=project_id,
