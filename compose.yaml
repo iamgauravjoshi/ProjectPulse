@@ -18,3 +18,4 @@ services:
 volumes:
   projectpulse_pgdata:
     name: ${POSTGRES_DATA_VOLUME:-projectpulse_pgdata}
+    external: ${POSTGRES_DATA_VOLUME_EXTERNAL:-false}

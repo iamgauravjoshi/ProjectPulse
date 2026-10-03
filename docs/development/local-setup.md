@@ -81,7 +81,8 @@ existing bookmarks, memberships and edited baseline records remain valid.
 
 Before changing the Compose project name to `projectpulse`, find the existing
 database's volume name in Docker Desktop (container details → mounts). Set
-`POSTGRES_DATA_VOLUME` in your existing `.env` to that exact volume name. Stop the
+`POSTGRES_DATA_VOLUME` in your existing `.env` to that exact volume name and set
+`POSTGRES_DATA_VOLUME_EXTERNAL=true` to reuse it without changing its ownership. Stop the
 old database container, then start the new Compose project using the commands above.
 This reuses the existing data instead of initializing another database. Do not
 delete the original volume or overwrite your `.env` with the new sample.

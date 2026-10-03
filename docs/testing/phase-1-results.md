@@ -188,3 +188,17 @@ and upgrading an existing local database volume. Ready for completed-phase merge
 **Yes**. GitHub records the completed-phase publication; local validation is complete.
 The first published Phase 1 snapshot passed GitHub Actions; checkpoint updates
 also run the same CI workflow before completed-phase publication.
+
+CI follow-up: the rename checkpoint passed remotely. A later documentation-only
+checkpoint exposed a race in the existing selector keyboard test (18 of 19 browser
+cases passed). The test now waits for the selected option's focus after opening
+the menu and for the last option's focus after End before pressing Enter. It uses
+neither arbitrary sleeps nor retries. The corrected case passed **10 consecutive
+runs**, then the full **19-case browser suite** passed again; frontend static
+checks also passed. These corrections are pushed to the same Phase 1 branch before
+publishing the completed phase.
+
+Upgrade configuration also supports `POSTGRES_DATA_VOLUME_EXTERNAL=true` so an
+existing volume can be reused without changing its Compose ownership. Both fresh
+and external-volume Compose configurations validate. Existing baseline records
+and credentials are preserved.

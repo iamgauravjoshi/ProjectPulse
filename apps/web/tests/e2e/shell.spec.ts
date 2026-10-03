@@ -34,7 +34,13 @@ test("project selector supports keyboard switching and browser history", async (
   const selector = page.getByRole("combobox", { name: "Project", exact: true });
   await selector.focus();
   await selector.press("ArrowDown");
+  await expect(
+    page.getByRole("option", { name: projects[0].name, exact: true }),
+  ).toBeFocused();
   await page.keyboard.press("End");
+  await expect(
+    page.getByRole("option", { name: projects[1].name, exact: true }),
+  ).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(new RegExp(projects[1].id));
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
