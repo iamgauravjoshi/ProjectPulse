@@ -113,3 +113,20 @@ environment currently reports no configured provider credentials. No production 
 
 Use this confirmed baseline and source-aware retrieval for transcript relevance,
 project deltas, evidence-backed review and decision governance in later phases.
+
+### Manual-state browser editor
+
+`view=state` is bookmarkable; `kind` selects one of the six record types. Create and
+edit dialogs expose only editable fields, with project-scoped relation options.
+Unassigned owners/dates stay unresolved. Decisions default to Discussion; explicit
+Confirmed establishes human truth. Delete asks for confirmation and retains audit
+history. The overview reloads persisted state after each successful mutation.
+Failures preserve the draft; stale versions offer an explicit reload before editing
+again. Mutation requests are never automatically retried. Radix dialogs trap focus,
+support Escape and restore focus; mobile forms scroll within the viewport.
+
+The same-origin Next transport checks incoming browser Origin against Host (Next
+may internally rewrite request URLs), validates UUID/kind/version and bounds JSON
+bodies to 64 KiB. Backend membership and field/reference/version checks remain the
+final authority. Authentication is still the fixed local demo member; production
+identity and deployment remain outside Phase 2.

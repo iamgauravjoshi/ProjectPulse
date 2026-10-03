@@ -1,7 +1,7 @@
 "use client";
 
 import { MessageSquare } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   ErrorFeedback,
   Feedback,
@@ -12,6 +12,7 @@ import { ProjectHeader } from "../../components/workspace/project-header";
 import { RecordsView } from "../../components/workspace/records-view";
 import { AttentionPanel } from "../../components/workspace/attention-panel";
 import { ReviewInbox } from "../../components/workspace/review-inbox";
+import { StateEditor } from "../../components/memory/state-editor";
 import { loadWorkspace } from "./api";
 import type { ProjectSummary } from "./contracts";
 import type { WorkspaceView } from "./navigation";
@@ -29,6 +30,7 @@ export function ProjectContent({
     [project.id],
   );
   const resource = useResource(load);
+  const [message, setMessage] = useState("");
   let content: React.ReactNode;
   if (resource.status === "loading") content = <WorkspaceSkeleton />;
   else if (resource.status === "error")
@@ -37,6 +39,16 @@ export function ProjectContent({
         title="Project state couldn’t load"
         retry={resource.reload}
         headingLevel={2}
+      />
+    );
+  else if (view === "state")
+    content = (
+      <StateEditor
+        workspace={resource.data}
+        onChanged={(message) => {
+          setMessage(message);
+          resource.reload();
+        }}
       />
     );
   else if (view === "overview")
@@ -65,6 +77,15 @@ export function ProjectContent({
         view={view}
         members={resource.status === "ready" ? resource.data.members : []}
       />
+      {message && (
+        <p
+          role="status"
+          aria-label="Save feedback"
+          className="mb-4 rounded-lg bg-accent-soft p-3 text-sm text-accent"
+        >
+          {message}
+        </p>
+      )}
       {content}
     </div>
   );

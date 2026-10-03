@@ -43,3 +43,22 @@ review removes that timestamp. Ruff lint/format and mypy pass.
 Regression review: all Phase 0/1 backend tests remain passing. Foundation browser
 smoke passed both cases against the updated API before this checkpoint is pushed. Next step:
 2.1b, browser editor and full manual-state E2E acceptance.
+
+## STEP 2.1b COMPLETE — Manual-state browser editor
+
+Implemented bookmarkable six-category editing, scoped relation selectors, explicit
+confirmation/deletion, persisted-state refresh and success feedback. Failed writes
+preserve drafts; stale writes require explicit reload. Keyboard focus returns to
+the opener, and mobile dialogs stay within the viewport. Same-origin transport
+checks browser Origin against incoming Host with malformed/cross-origin rejection.
+
+Acceptance: **35 frontend unit tests**, **27 browser tests** (8 new) passed, including
+real PostgreSQL create → edit → reload → delete for all six record types. Tests use
+unique temporary records, clean them up and verify the seeded SSO phase/three
+confirmed decisions remain intact. Audit history remains truthful; the overview
+regression test now accepts the actual latest audit actions rather than assuming
+the original seed action is always among the ten latest events. All static checks
+and production webpack build pass. Turbopack now fails in this cloud environment
+when its CSS worker binds a socket (EPERM); the supported webpack builder succeeds.
+No application build configuration was changed to conceal that environment issue.
+Next checkpoint: Step 2.2 document upload and parsing.

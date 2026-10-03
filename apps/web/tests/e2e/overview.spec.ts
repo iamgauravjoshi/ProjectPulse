@@ -33,7 +33,15 @@ test("seeded overview shows all six canonical categories and truthful counts", a
     page.getByText("Retry failed payments three times."),
   ).toBeVisible();
   await expect(page.getByText("Due date not set")).toBeVisible();
-  await expect(page.getByText("Project baseline established")).toBeVisible();
+  const activity = await (
+    await page.request.get(`/api/workspace/projects/${fixture.project.id}`)
+  ).json();
+  expect(activity.activity.length).toBeGreaterThan(0);
+  await expect(
+    page
+      .getByRole("heading", { name: "Project activity", exact: true })
+      .locator("../.."),
+  ).toContainText(/Project baseline established|Manual state|Document/);
 });
 
 test("decisions support search, status filter and empty results", async ({
