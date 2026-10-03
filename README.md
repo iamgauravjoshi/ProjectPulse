@@ -137,7 +137,8 @@ attention/review navigation, failure/retry, keyboard behavior, desktop/mobile
 rendering and real PostgreSQL readiness. If using an existing Chromium installation, set
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to its absolute path instead of downloading
 a browser. The CI workflow is configured for the same static, database and browser
-checks; remote CI execution has not been verified.
+checks. Pushed checkpoints also run in
+[GitHub Actions](https://github.com/iamgauravjoshi/ProjectPulse/actions).
 
 To refresh the documented desktop/mobile previews, run the browser suite with
 `CAPTURE_WORKSPACE=1`. Screenshots contain only the synthetic seeded demo.

@@ -131,8 +131,10 @@ integration passed**, **19 E2E passed**. Production build, lint, formatting and
 frontend/backend type checks passed. No pre-existing failures remain.
 
 Manual verification: desktop/mobile screenshot review and a baseline/read-flow
-walkthrough. Interaction assertions use actual browser automation; remote CI has
-not been executed. No public deployment was attempted.
+walkthrough. Interaction assertions use actual browser automation. Remote CI was
+unverified at the initial local checkpoint; the first published Phase 1 commit
+subsequently [passed GitHub Actions](https://github.com/iamgauravjoshi/ProjectPulse/actions/runs/37114685434).
+No public deployment was attempted.
 
 Known limitations: fixed local demo identity; no production authentication;
 canonical editing, transcript evidence, AI detection and review confirmation are
@@ -183,4 +185,6 @@ The application remains a browser-based web product. Local developers run the
 stack; hosted users will open a URL. A native Windows executable is outside the
 current scope. The [local guide](../development/local-setup.md) explains both use
 and upgrading an existing local database volume. Ready for completed-phase merge:
-**Yes**. GitHub records the final merge; local validation is complete.
+**Yes**. GitHub records the completed-phase publication; local validation is complete.
+The first published Phase 1 snapshot passed GitHub Actions; checkpoint updates
+also run the same CI workflow before completed-phase publication.

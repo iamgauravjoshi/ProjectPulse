@@ -135,7 +135,7 @@ records and overdue commitments are exercised with controlled fixtures.
 One seeded project and a fixed local demo actor. State editing, transcript evidence
 and review actions are not yet available. The demo timezone is fixed to Asia/Kolkata;
 attention updates when the workspace snapshot loads, not on a midnight timer.
-Remote CI execution remains unverified.
+Public deployment remains future work. Pushed checkpoints run in GitHub Actions.
 
 ## Future improvements
 
