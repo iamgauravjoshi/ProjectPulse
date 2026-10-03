@@ -12,6 +12,7 @@ import { ProjectHeader } from "../../components/workspace/project-header";
 import { RecordsView } from "../../components/workspace/records-view";
 import { AttentionPanel } from "../../components/workspace/attention-panel";
 import { ReviewInbox } from "../../components/workspace/review-inbox";
+import { DocumentLibrary } from "../../components/memory/document-library";
 import { StateEditor } from "../../components/memory/state-editor";
 import { loadWorkspace } from "./api";
 import type { ProjectSummary } from "./contracts";
@@ -41,6 +42,8 @@ export function ProjectContent({
         headingLevel={2}
       />
     );
+  else if (view === "documents")
+    content = <DocumentLibrary projectId={project.id} />;
   else if (view === "state")
     content = (
       <StateEditor

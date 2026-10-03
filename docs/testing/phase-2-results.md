@@ -62,3 +62,22 @@ and production webpack build pass. Turbopack now fails in this cloud environment
 when its CSS worker binds a socket (EPERM); the supported webpack builder succeeds.
 No application build configuration was changed to conceal that environment issue.
 Next checkpoint: Step 2.2 document upload and parsing.
+
+## STEP 2.2 COMPLETE — Project document evidence
+
+Added reversible `0003_documents`, four local open-source parsers, provenance-bearing
+text segments, bounded raw-byte upload, same-project reads/deletes, hash deduplication
+and atomic audit. Preserved the existing local database/volume with an additive
+migration. The browser library supports upload/read/delete, errors, duplicate and
+empty feedback, retry and mobile layout. Original bytes are retained in PostgreSQL;
+no uploaded content writes canonical state or reaches an AI provider in this step.
+
+Validation: **129 backend tests passed**, including 26 new parsing/PG scenarios.
+Schema metadata matches migrated tables; upgrade/downgrade/reapply regressions pass.
+All 35 frontend unit tests, lint/types/format and production webpack build pass.
+The full 33-case browser run passed 32 cases; the malformed upload case exposed an
+ambiguous alert selector due to Next's route announcer. Naming the library alert
+fixed that case; all **6 document browser cases passed** on the corrected build,
+with the other 27 regression cases already passing. The stream-size guard was
+strengthened to check incoming chunk size before accumulation; all 26 document
+backend cases passed again. Next: Step 2.3 chunks and Gemini indexing.

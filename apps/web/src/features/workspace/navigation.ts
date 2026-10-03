@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   Database,
+  FileText,
   CheckCheck,
   CircleAlert,
   LayoutDashboard,
@@ -12,6 +13,7 @@ import {
 export const navigation = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "state", label: "Project state", icon: Database },
+  { id: "documents", label: "Documents", icon: FileText },
   { id: "meetings", label: "Meetings", icon: CalendarDays },
   { id: "decisions", label: "Decisions", icon: ListChecks },
   { id: "commitments", label: "Commitments", icon: CheckCheck },

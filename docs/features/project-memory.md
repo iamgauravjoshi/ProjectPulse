@@ -130,3 +130,34 @@ may internally rewrite request URLs), validates UUID/kind/version and bounds JSO
 bodies to 64 KiB. Backend membership and field/reference/version checks remain the
 final authority. Authentication is still the fixed local demo member; production
 identity and deployment remain outside Phase 2.
+
+### Documents: storage, API and safeguards
+
+Migration `0003_documents` stores project-owned evidence: immutable content SHA-256,
+original bytes (PostgreSQL BYTEA), sanitized display filename, uploader, timestamps
+and parsed page/section/text segments (JSONB). This small local application avoids
+object-storage infrastructure; BYTEA is suitable only for the bounded demo budget.
+A unique `(project_id, content_hash)` prevents duplicates, including concurrent
+uploads. Upload and delete each append an atomic audit event; duplicate upload
+returns the existing document without another event. Canonical state is untouched.
+
+`GET/POST /api/v1/projects/{id}/documents` lists/uploads. POST sends raw file bytes
+with the filename query parameter, allowing streaming size enforcement before a
+multipart parser could spool arbitrary input. `GET/DELETE /documents/{documentId}`
+returns traceable extracted text or deletes evidence. Original binary bytes are
+retained but never exposed by the JSON API. UUIDs, membership and project ownership
+are checked; no filesystem extraction, path writes or client-supplied project scope.
+
+Parsers: pypdf (PDF pages), python-docx (headings/paragraphs/tables), UTF-8 decoding
+(TXT/Markdown headings). Limits: 5 MiB upload, 200,000 extracted characters, 200 PDF
+pages, bounded PDF stream decompression/page tree/form invocations, DOCX zip entry/
+expanded-size/compression-ratio limits. Encrypted, malformed, blank and image-only
+PDFs fail clearly. OCR, legacy `.doc`, rich rendering and unbounded files are outside
+scope. DOCX section headings are retained; page numbers are unavailable because DOCX
+pagination requires a rendering engine. Text is rendered as escaped text, never
+uploaded HTML. A document can be uploaded again after deletion; retained audit
+history records both events.
+
+`view=documents` provides upload progress, errors, duplicate feedback, a source-text
+viewer with page/section labels and explicit delete confirmation. Empty and retry
+states remain usable on mobile. Gemini indexing follows as a separate checkpoint.
