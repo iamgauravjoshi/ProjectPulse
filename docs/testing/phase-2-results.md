@@ -1,7 +1,8 @@
 # Phase 2 checkpoint results
 
-Started 3 October 2026 (Asia/Calcutta). Phase 2 in progress; do not merge to `main`
-until every step and phase-wide acceptance are complete.
+Started and accepted 3 October 2026 (Asia/Calcutta). All Phase 2 steps and phase-wide
+acceptance are complete. Earlier checkpoints below record the evidence and blockers
+at that time; the final acceptance section closes the live Gemini blocker.
 
 Feature: [canonical project memory](../features/project-memory.md).
 Branch: `phase/2-project-memory`. Base: latest verified Phase 1 `main`, commit
@@ -136,7 +137,7 @@ browser/static checks; screenshots use synthetic temporary records and are inspe
 on desktop/mobile. Setup docs explain phase checkout, additive migrations, browser
 usage, server-only Gemini credentials and the remaining live acceptance procedure.
 
-## Phase acceptance status — NOT MERGED
+## Acceptance status at the context-search checkpoint — awaiting live verification
 
 All implemented Phase 2 paths pass automated acceptance/regression checks. Gemini
 provider contract/vector retrieval tests use synthetic provider responses and real
@@ -179,6 +180,29 @@ model, dimensions and sanitized failure status. In this cloud executor it correc
 reports missing configuration without sending a request. No SDK was added to the
 project dependencies; its serializer was inspected in an isolated temporary install.
 
-Live authentication/indexing/paraphrase verification must still run on the user's
-laptop (or a separately configured cloud runtime). Keep PR #2 draft and main unchanged
-until that succeeds; automated provider responses remain explicitly synthetic.
+At this correction checkpoint, live authentication/indexing/paraphrase verification
+still had to run on the user's laptop. That blocker is closed by the user-reported
+verification below; automated provider responses remain explicitly synthetic.
+
+## Final Phase 2 acceptance — complete
+
+After receiving the laptop connectivity/indexing recovery procedure, the user
+reported "All done". This records **user-reported laptop verification** of the
+document/query 768-dimension probe, indexing existing TXT/PDF documents, paraphrase
+retrieval, source citation checks and unchanged baseline. The agent did not receive
+the private key or independently execute live Google calls on the laptop.
+
+The final code checkpoint is `2ad73f76b66d452a6b663493270dfa0732b3eae9`.
+Both [PR CI](https://github.com/iamgauravjoshi/ProjectPulse/actions/runs/37142835278)
+and [branch CI](https://github.com/iamgauravjoshi/ProjectPulse/actions/runs/37142832269)
+passed on that exact commit, including **165 backend tests, 37 frontend unit tests
+and 37 browser tests**, static/database checks, the normal production build and
+Windows frontend compatibility/dependency checks. This final acceptance checkpoint
+changes documentation only; its CI must pass before merge.
+
+All four project-memory steps and the purple theme are complete. The final
+checkpoint is pushed to `phase/2-project-memory` and merged through
+[PR #2](https://github.com/iamgauravjoshi/ProjectPulse/pull/2) after checks pass,
+under the authorized completed-phase workflow. The phase branch is retained.
+No Phase 3 implementation has started. Production authentication, deployment,
+large-scale relevance benchmarking and a native executable remain outside scope.

@@ -3,10 +3,8 @@
 Project intelligence and decision reconciliation. Meetings are evidence; the
 project state is the truth.
 
-Phases 0 and 1 are complete. Phase 2 implementation is on
-`phase/2-project-memory`; live Gemini acceptance is pending before merge.
-It adds audited manual editing, a document library, Gemini indexing and bounded
-context search in a purple theme. See the
+Phases 0, 1 and 2 are complete. Phase 2 adds audited manual editing, a document
+library, Gemini indexing and bounded context search in a purple theme. See the
 [project memory feature](docs/features/project-memory.md) and
 [Phase 2 results](docs/testing/phase-2-results.md).
 

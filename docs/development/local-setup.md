@@ -135,14 +135,15 @@ See the [Phase 1 report](../testing/phase-1-results.md) and
 [test commands](../../README.md#checks).
 
 
-## Trying Phase 2 before merge
+## Updating to completed Phase 2
 
-Phase 2 is kept on `phase/2-project-memory` until its live Gemini acceptance passes.
-To try this implementation, clone that branch or switch an existing clean checkout:
+Phase 2 is available on `main`; `phase/2-project-memory` is retained for history.
+Update an existing clean checkout:
 
 ```sh
 git fetch origin
-git switch phase/2-project-memory
+git switch main
+git pull --ff-only origin main
 ```
 
 Then run `uv sync --frozen` and `uv run alembic upgrade head` from `apps/api`,
@@ -174,7 +175,7 @@ In Documents, upload a small readable document and click **Index**. Expect
 `indexed` with a positive chunk count. Search for a paraphrase of a distinctive
 sentence in Context search; expect **Text and semantic search** and a citation
 back to the original page/section. Verify the source text and confirm no baseline
-fact changed. This is the remaining live acceptance check before Phase 2 merge.
+fact changed. These checks verify Gemini configuration on your installation.
 Without a key, upload/read/manual editing and text search still work; the app
 explicitly reports semantic search/indexing as unavailable. Automated browser tests
 force an empty key, while provider contract tests use synthetic responses.

@@ -1,7 +1,7 @@
 # Gemini setup and indexing recovery
 
-Use this guide with `phase/2-project-memory`. Phase 2 stays off main until a live
-indexing/paraphrase-search check passes.
+Use this guide with completed Phase 2 on `main`. The phase branch
+`phase/2-project-memory` is retained for history.
 
 ## Running on your laptop
 
@@ -12,15 +12,16 @@ FastAPI; FastAPI makes the HTTPS request to Google through your normal network.
 Do not copy your local key into Codex just to use the local application.
 
 1. Open a terminal at your ProjectPulse checkout (the directory containing `apps`,
-   `README.md` and `.env`). Pull the tested Phase 2 fix:
+   `README.md` and `.env`). Pull the completed Phase 2 implementation:
 
    ```sh
-   git switch phase/2-project-memory
-   git pull --ff-only origin phase/2-project-memory
+   git switch main
+   git pull --ff-only origin main
    ```
 
-   Preserve your existing `.env` and local database. This fix adds no migration or
-   database reset. Git does not transfer the ignored `.env` file.
+   Preserve your existing `.env` and local database. If upgrading from Phase 1,
+   apply the additive migrations using the local setup guide. The Gemini wire-format
+   fix adds no migration or database reset. Git does not transfer the ignored `.env`.
 
 2. In that root `.env`, use the exact variable name:
 
@@ -98,7 +99,7 @@ Do not copy your local key into Codex just to use the local application.
    citation with the original. Confirm the baseline records did not change.
 
 If the probe or indexing still fails, share the probe output or the displayed error,
-not your key or `.env`. Live document retrieval is the remaining phase acceptance check.
+not your key or `.env`. The checks above verify your local live document retrieval.
 
 ## Why “Embedding provider returned invalid vectors” occurred
 

@@ -1,7 +1,8 @@
 # Canonical project memory
 
-Status: Phase 2 implementation is tested on `phase/2-project-memory`. Live Gemini
-acceptance is pending; the phase has not been merged into `main`.
+Status: Phase 2 acceptance is complete. Automated checks passed on
+`phase/2-project-memory`; the user reported completing the documented live Gemini
+checks on their laptop. See the phase completion report for verification evidence.
 
 ## Purpose and user problem
 
@@ -107,8 +108,9 @@ dependency/audit checks. Current Phase 2 commands, results and regressions are i
 
 ## Known limitations
 
-Phase 2 is in progress. Live embeddings require a server-side provider key; this
-environment currently reports no configured provider credentials. No production auth.
+Live embeddings require a server-side provider key. The user verified their laptop
+setup; this development cloud environment has no provider credentials, so its
+automated provider tests use synthetic responses. No production auth.
 
 ## Future improvements
 
@@ -234,9 +236,9 @@ are covered by browser tests. Search never writes canonical state or audit event
 
 ### Known limitations and future work
 
-Live Gemini quality/credentials/network acceptance remains pending; do not merge
-Phase 2 until the documented live indexing/paraphrase search succeeds. Exact cosine
-scans and bounded LIKE queries suit this local dataset; larger deployments need
+The user reported completing live indexing/paraphrase/source verification on their
+laptop; this is separate from automated tests and is not a broad relevance benchmark.
+Exact cosine scans and bounded LIKE queries suit this local dataset; larger deployments need
 project-aware ANN/FTS indexes and measured relevance tuning. The 0.6 distance cutoff
 is an initial conservative heuristic, not a verified semantic-quality guarantee.
 There is no background indexing worker, OCR, production login, upload antivirus
