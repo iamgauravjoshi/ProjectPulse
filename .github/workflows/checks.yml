@@ -3,6 +3,26 @@ name: Foundation checks
 on: [push, pull_request]
 
 jobs:
+  windows-frontend-audit:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Windows dependency and lint compatibility
+        working-directory: apps/web
+        run: |
+          npm ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm audit --audit-level=high
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run lint
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   foundation:
     runs-on: ubuntu-latest
     services:
@@ -45,6 +65,7 @@ jobs:
         working-directory: apps/web
         run: |
           npm ci
+          npm audit --audit-level=high
           npm run lint
           npm run typecheck
           npm run format:check
