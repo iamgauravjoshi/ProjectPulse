@@ -24,6 +24,11 @@
     "react-dom": "19.3.0",
     "zod": "4.6.5"
   },
+  "overrides": {
+    "@next/eslint-plugin-next": {
+      "fast-glob": "$fast-glob"
+    }
+  },
   "devDependencies": {
     "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "4.3.3",
@@ -32,6 +37,7 @@
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.8",
+    "fast-glob": "file:./tools/next-eslint-glob",
     "prettier": "3.9.9",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3",

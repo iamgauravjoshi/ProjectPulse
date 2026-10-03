@@ -202,3 +202,33 @@ Upgrade configuration also supports `POSTGRES_DATA_VOLUME_EXTERNAL=true` so an
 existing volume can be reused without changing its Compose ownership. Both fresh
 and external-volume Compose configurations validate. Existing baseline records
 and credentials are preserved.
+
+## Phase 1 follow-up — Safe frontend dependency audit fix
+
+Completed locally on 3 October 2026. `GHSA-vfj7-8cjw-p6xm` affects all published
+`braces` releases through 3.0.3. The five high-severity audit entries are one
+vulnerable chain through the Next.js ESLint plugin, `fast-glob` and `micromatch`.
+
+Implemented: a scoped npm override redirects only `@next/eslint-plugin-next`'s
+`fast-glob` dependency to a local CommonJS adapter using `tinyglobby` 0.2.17.
+The adapter preserves literal directory lookup and absolute glob results instead
+of adopting tinyglobby's automatic directory expansion. The lockfile removes
+`braces`, `micromatch` and their unused dependencies. Existing registry package
+versions, including Next.js and `eslint-config-next` 16.3.8, are unchanged.
+The local setup guide documents the workaround and Windows-compatible commands;
+CI now checks the full audit for high/critical vulnerabilities and verifies clean
+installation, lint and unit tests on Windows as well as the existing Linux job.
+
+Validation:
+
+- Clean `npm ci` succeeded; full `npm audit` reports **0 vulnerabilities**
+  (previously five high-severity entries).
+- Frontend unit suite: **25 passed**, including six compatibility checks for
+  default/literal/missing/file roots, directory-only globs, brace patterns,
+  root arrays, Windows separators, deeply nested braces and actual internal-link
+  lint diagnostics.
+- Lint, formatting, production build and TypeScript checks passed.
+
+Database and application behavior changes: none. No new product phase started.
+The adapter must be reviewed on future ESLint plugin upgrades and removed when
+an upstream fix becomes available.

@@ -73,6 +73,35 @@ database while keeping its data. Do not remove its volume as routine cleanup.
 - If port 3000 is occupied, stop the other server or use the URL printed by Next.js.
 - If Python is not installed, use `uv python install 3.12`, then retry `uv sync`.
 
+### Frontend dependency audit
+
+For `GHSA-vfj7-8cjw-p6xm`, do not run `npm audit fix --force` or downgrade
+`eslint-config-next`. As of 3 October 2026, every published `braces` version
+(including 3.0.3) is affected, so pinning 3.0.3 does not fix this advisory.
+
+The frontend replaces only the Next.js ESLint plugin's `fast-glob` dependency
+with the local `tools/next-eslint-glob` adapter backed by pinned `tinyglobby`.
+It preserves the plugin's synchronous directory lookup, including literal roots,
+absolute globs and Windows separators, without installing `micromatch` or `braces`.
+Next.js, ESLint and their lint rules retain their existing versions/configuration.
+The adapter deliberately supports only the API used by the current plugin;
+recheck compatibility when upgrading `eslint-config-next`, and remove this
+workaround once an upstream release eliminates the vulnerable dependency chain.
+
+After pulling the fix, run these commands from `apps/web` (also valid in Windows
+Command Prompt):
+
+```sh
+npm ci
+npm audit
+npm run lint
+```
+
+Keep the committed lockfile and `tools/next-eslint-glob` directory together.
+`npm ci` installs the tested dependency tree. The full audit includes development
+dependencies; `npm audit --omit=dev` alone would leave the lint dependency issue
+unresolved.
+
 ## Upgrading an existing local installation
 
 Keep your existing `.env` and its database credentials/name. Renaming the product
