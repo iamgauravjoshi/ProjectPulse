@@ -1,30 +1,21 @@
 import type { LucideIcon } from "lucide-react";
 import { humanLabel } from "../../features/workspace/presenters";
+import { statusTone } from "../../features/workspace/status";
+import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Empty, EmptyDescription } from "../ui/feedback";
 
-export function StatusBadge({ status }: { status: string }) {
-  const positive = [
-    "CONFIRMED",
-    "ACTIVE",
-    "READY",
-    "DONE",
-    "COMPLETED",
-  ].includes(status);
-  const warning = [
-    "HIGH",
-    "CRITICAL",
-    "PENDING",
-    "BLOCKED",
-    "AT_RISK",
-    "REVIEW_REQUIRED",
-    "PROVISIONAL",
-    "OVERDUE",
-  ].includes(status);
+export function StatusBadge({
+  status,
+  variant = "filled",
+}: {
+  status: string;
+  variant?: "filled" | "outline";
+}) {
   return (
-    <span
-      className={`inline-flex shrink-0 items-center rounded-md px-2 py-0.5 text-[13px] font-medium ${positive ? "bg-accent-soft text-accent" : warning ? "bg-amber-50 text-amber-800" : "bg-surface-muted text-muted"}`}
-    >
+    <Badge tone={statusTone(status)} variant={variant} data-status={status}>
       {humanLabel(status)}
-    </span>
+    </Badge>
   );
 }
 
@@ -42,19 +33,22 @@ export function Panel({
   id?: string;
 }) {
   return (
-    <section id={id} className="min-w-0 rounded-xl border border-line bg-white">
-      <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
+    <Card id={id}>
+      <CardHeader>
+        <CardTitle>
           {Icon && <Icon size={18} aria-hidden="true" className="text-muted" />}
           {title}
-        </h2>
+        </CardTitle>
         {action}
-      </div>
-      {children}
-    </section>
+      </CardHeader>
+      <CardContent flush>{children}</CardContent>
+    </Card>
   );
 }
-
 export function EmptyCategory({ text }: { text: string }) {
-  return <p className="px-5 py-6 text-sm leading-6 text-muted">{text}</p>;
+  return (
+    <Empty compact>
+      <EmptyDescription>{text}</EmptyDescription>
+    </Empty>
+  );
 }

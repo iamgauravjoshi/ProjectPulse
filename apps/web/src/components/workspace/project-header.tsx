@@ -9,6 +9,8 @@ import {
   type WorkspaceView,
   workspaceHref,
 } from "../../features/workspace/navigation";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 import { humanLabel } from "../../features/workspace/presenters";
 
 export function ProjectHeader({
@@ -28,29 +30,26 @@ export function ProjectHeader({
             <CircleCheck size={15} aria-hidden="true" />
             {navigation.find((item) => item.id === view)?.label}
           </p>
-          <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-ink">
-            {project.name}
-          </h1>
+          <h1 className="page-title">{project.name}</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
             {project.description}
           </p>
         </div>
-        <Link
-          href={workspaceHref(project.id, "review")}
-          className="button-secondary shrink-0 self-start"
-        >
-          Open review inbox
-          <ArrowUpRight size={15} aria-hidden="true" />
-        </Link>
+        <Button asChild variant="outline" className="self-start">
+          <Link href={workspaceHref(project.id, "review")}>
+            Open review inbox
+            <ArrowUpRight data-icon="inline-end" aria-hidden="true" />
+          </Link>
+        </Button>
       </div>
       {members.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <div className="flex shrink-0 -space-x-1.5">
+          <div className="flex shrink-0 [&>*+*]:-ml-1.5">
             {members.map((member) => (
               <span
                 key={member.id}
                 title={`${member.name} · ${humanLabel(member.role)}`}
-                className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-canvas bg-accent-soft text-[13px] font-medium text-ink"
+                className="flex size-7 items-center justify-center rounded-full border-2 border-canvas bg-accent-soft text-[13px] font-medium text-ink"
               >
                 {member.name[0]}
               </span>
@@ -62,9 +61,9 @@ export function ProjectHeader({
           <span className="hidden text-line sm:inline" aria-hidden="true">
             ·
           </span>
-          <span className="whitespace-nowrap text-[13px] text-muted">
+          <Badge tone="success" variant="outline">
             Human-established baseline
-          </span>
+          </Badge>
         </div>
       )}
     </div>

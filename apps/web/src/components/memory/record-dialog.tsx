@@ -1,5 +1,17 @@
 "use client";
-import * as Dialog from "@radix-ui/react-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Field, FieldGroup, FieldLabel } from "../ui/field";
+import { Input, NativeSelect, Textarea } from "../ui/input";
+import { Alert } from "../ui/feedback";
+import { humanLabel } from "../../features/workspace/presenters";
 import { useState } from "react";
 import type { Workspace } from "../../features/workspace/contracts";
 import {
@@ -92,35 +104,36 @@ export function RecordDialog({
           HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
         >,
       ) => setValues({ ...values, [key]: e.target.value }),
-      className:
-        "mt-1 block w-full rounded-lg border border-line bg-white px-3 py-2 text-sm",
+      "aria-invalid": error?.code === "INVALID_FIELDS" || undefined,
     };
     return (
-      <label
+      <Field
         key={key}
-        htmlFor={common.id}
-        className="block text-sm font-medium"
+        data-disabled={pending || undefined}
+        data-invalid={error?.code === "INVALID_FIELDS" || undefined}
       >
-        {labels[key]}
+        <FieldLabel htmlFor={common.id}>{labels[key]}</FieldLabel>
         {choices ? (
-          <select {...common}>
+          <NativeSelect {...common}>
             {choices.map((c) => (
-              <option key={c}>{c}</option>
+              <option key={c} value={c}>
+                {humanLabel(c)}
+              </option>
             ))}
-          </select>
+          </NativeSelect>
         ) : relations ? (
-          <select {...common}>
+          <NativeSelect {...common}>
             <option value="">Unassigned</option>
             {relations.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.title}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         ) : key === "description" ? (
-          <textarea {...common} rows={3} maxLength={20000} />
+          <Textarea {...common} rows={3} maxLength={20000} />
         ) : (
-          <input
+          <Input
             {...common}
             type={
               key === "date" || key === "dueDate"
@@ -135,46 +148,42 @@ export function RecordDialog({
             maxLength={key === "title" ? 240 : undefined}
           />
         )}
-      </label>
+      </Field>
     );
   }
   return (
-    <Dialog.Root
+    <Dialog
       open
       onOpenChange={(open) => {
         if (!open && !pending) close();
       }}
     >
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/30" />
-        <Dialog.Content
-          onCloseAutoFocus={(e) => {
-            e.preventDefault();
-            opener.current?.focus();
-          }}
-          className="fixed left-1/2 top-1/2 z-50 max-h-[85dvh] w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
-        >
-          <Dialog.Title className="text-xl font-semibold">{title}</Dialog.Title>
-          <Dialog.Description className="mt-2 text-sm text-muted">
+      <DialogContent
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          opener.current?.focus();
+        }}
+      >
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>
             {target.remove
               ? `Delete “${target.record?.title}”? The audit history is retained. Linked records must be unlinked first.`
               : "Only your explicit save changes canonical state. Confirmed decisions establish the human baseline."}
-          </Dialog.Description>
-          <form onSubmit={save} className="mt-5 space-y-4">
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={save} className="mt-5">
+          <FieldGroup>
             {!target.remove && [
               field("title", null),
               field("description", null),
               ...Object.entries(fields[kind]).map(([k, v]) => field(k, v)),
             ]}
-            {error && (
-              <p role="alert" className="text-sm text-red-700">
-                {error.message}
-              </p>
-            )}
+            {error && <Alert variant="destructive">{error.message}</Alert>}
             {error?.code === "STALE_VERSION" && (
-              <button
+              <Button
                 type="button"
-                className="button-secondary"
+                variant="outline"
                 onClick={() =>
                   onChanged(
                     "Latest state loaded. Reopen the record to review your changes.",
@@ -182,28 +191,32 @@ export function RecordDialog({
                 }
               >
                 Reload latest state
-              </button>
+              </Button>
             )}
-            <div className="flex gap-3">
-              <button className="button-primary" disabled={pending}>
+            <DialogFooter>
+              <Button
+                type="submit"
+                variant={target.remove ? "destructive" : "default"}
+                disabled={pending}
+              >
                 {pending
                   ? "Saving…"
                   : target.remove
                     ? "Confirm delete"
                     : "Save record"}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="button-secondary"
+                variant="outline"
                 disabled={pending}
                 onClick={close}
               >
                 Cancel
-              </button>
-            </div>
-          </form>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+              </Button>
+            </DialogFooter>
+          </FieldGroup>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

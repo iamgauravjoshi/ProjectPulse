@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../components/ui/button";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppShell } from "../../components/workspace/app-shell";
@@ -33,13 +34,9 @@ export function WorkspaceScreen() {
         title="No projects yet"
         description="A project gives your conversations a trusted baseline."
         action={
-          <button
-            type="button"
-            className="button-secondary"
-            onClick={projects.reload}
-          >
+          <Button type="button" variant="outline" onClick={projects.reload}>
             Refresh projects
-          </button>
+          </Button>
         }
       />
     );
@@ -49,13 +46,12 @@ export function WorkspaceScreen() {
         title="Project unavailable"
         description="Choose a project to continue. You may not have access to this workspace."
         action={
-          <button
+          <Button
             type="button"
-            className="button-primary"
             onClick={() => router.push(workspaceHref(list[0].id))}
           >
             Choose available project
-          </button>
+          </Button>
         }
       />
     );
@@ -65,9 +61,9 @@ export function WorkspaceScreen() {
         title="Page not found"
         description="This workspace view isn’t available."
         action={
-          <Link className="button-primary" href={workspaceHref(selected.id)}>
-            Back to overview
-          </Link>
+          <Button asChild>
+            <Link href={workspaceHref(selected.id)}>Back to overview</Link>
+          </Button>
         }
       />
     );

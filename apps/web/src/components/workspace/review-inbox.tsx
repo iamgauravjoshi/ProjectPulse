@@ -21,7 +21,12 @@ export function ReviewInbox({ workspace }: { workspace: Workspace }) {
                 >
                   {item.title}
                 </Link>
-                <p className="mt-2 text-sm text-muted">{item.description}</p>
+                <div className="mt-2">
+                  <StatusBadge status={item.status} />
+                </div>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  {item.description}
+                </p>
               </li>
             ))}
           </ul>

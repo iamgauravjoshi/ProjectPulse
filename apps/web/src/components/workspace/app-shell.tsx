@@ -1,6 +1,14 @@
 "use client";
 
-import * as Dialog from "@radix-ui/react-dialog";
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "../ui/dialog";
 import { ChevronRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -11,6 +19,9 @@ import {
   workspaceHref,
 } from "../../features/workspace/navigation";
 import { HelpDialog } from "./help-dialog";
+import { cn } from "../../lib/utils";
+import { Badge } from "../ui/badge";
+import { Separator } from "../ui/feedback";
 import { ProjectSelector } from "./project-selector";
 
 type ShellProps = {
@@ -31,11 +42,11 @@ function Sidebar({
   onNavigate,
 }: Omit<ShellProps, "children"> & { onNavigate?: () => void }) {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex min-h-full flex-col">
       <div className="flex h-[72px] shrink-0 items-center gap-2.5 px-5">
         <span
           aria-hidden="true"
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-base font-semibold text-white"
+          className="flex size-8 items-center justify-center rounded-lg bg-accent text-base font-semibold text-white"
         >
           P
         </span>
@@ -44,9 +55,7 @@ function Sidebar({
         </span>
       </div>
       <div className="mb-4 px-5">
-        <span className="rounded-md bg-surface-muted px-2 py-1 text-[13px] font-medium text-muted">
-          Demo workspace
-        </span>
+        <Badge variant="outline">Demo workspace</Badge>
       </div>
       <ProjectSelector
         projects={projects}
@@ -57,9 +66,14 @@ function Sidebar({
           onNavigate?.();
         }}
       />
-      <nav aria-label="Main navigation" className="space-y-1 px-3">
+      <nav aria-label="Main navigation" className="flex flex-col gap-1 px-3">
         {navigation.map(({ id, label, icon: Icon }) => {
-          const style = `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${selected && view === id ? "bg-accent-soft text-accent" : "text-muted hover:bg-surface-muted hover:text-ink"}`;
+          const style = cn(
+            "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+            selected && view === id
+              ? "bg-accent-soft text-accent-deep"
+              : "text-muted hover:bg-surface-muted hover:text-ink",
+          );
           return selected ? (
             <Link
               key={id}
@@ -75,7 +89,7 @@ function Sidebar({
             <span
               key={id}
               aria-disabled="true"
-              className={`${style} opacity-60`}
+              className={cn(style, "opacity-60")}
             >
               <Icon size={18} aria-hidden="true" />
               {label}
@@ -85,7 +99,8 @@ function Sidebar({
       </nav>
       <div className="mt-auto px-3 pb-4 pt-8">
         <HelpDialog />
-        <div className="mt-4 border-t border-line px-3 pt-4">
+        <div className="mt-4 px-3">
+          <Separator className="mb-4" />
           <p className="text-[13px] leading-5 text-muted">
             Meetings are evidence.
             <br />
@@ -100,28 +115,30 @@ function Sidebar({
 export function AppShell(props: ShellProps) {
   const [open, setOpen] = useState(false);
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <a
         href="#workspace-content"
-        className="sr-only z-[80] rounded bg-white p-3 text-accent focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
+        className="sr-only z-[80] rounded bg-surface p-3 text-accent focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
       >
         Skip to workspace
       </a>
-      <aside className="fixed inset-y-0 left-0 hidden w-60 border-r border-line bg-white lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-60 overflow-y-auto border-r border-line bg-surface lg:block">
         <Sidebar {...props} />
       </aside>
       <div className="min-h-screen lg:ml-60">
-        <header className="flex h-[72px] items-center justify-between gap-4 border-b border-line bg-white px-4 lg:px-8">
+        <header className="flex h-[72px] items-center justify-between gap-4 border-b border-line bg-surface px-4 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
-            <Dialog.Trigger asChild>
-              <button
+            <DialogTrigger asChild>
+              <Button
                 type="button"
-                className="icon-button shrink-0 lg:hidden"
+                variant="ghost"
+                size="icon"
+                className="shrink-0 lg:hidden"
                 aria-label="Open navigation"
               >
-                <Menu size={20} />
-              </button>
-            </Dialog.Trigger>
+                <Menu data-icon="inline-start" />
+              </Button>
+            </DialogTrigger>
             <div className="flex min-w-0 items-center gap-2 text-sm">
               <span className="shrink-0 text-muted">Projects</span>
               <ChevronRight
@@ -143,7 +160,7 @@ export function AppShell(props: ShellProps) {
             </span>
             <span
               title="Sarah · Product owner"
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent"
+              className="flex size-8 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent"
             >
               S
             </span>
@@ -157,25 +174,24 @@ export function AppShell(props: ShellProps) {
           {props.children}
         </main>
       </div>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-ink/30" />
-        <Dialog.Content className="fixed inset-y-0 left-0 z-50 w-[min(320px,calc(100%-32px))] border-r border-line bg-white">
-          <Dialog.Title className="sr-only">Workspace navigation</Dialog.Title>
-          <Dialog.Description className="sr-only">
-            Choose a project and workspace view.
-          </Dialog.Description>
-          <Sidebar {...props} onNavigate={() => setOpen(false)} />
-          <Dialog.Close asChild>
-            <button
-              type="button"
-              className="icon-button absolute right-3 top-5"
-              aria-label="Close navigation"
-            >
-              <X size={18} />
-            </button>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+      <DialogContent size="sheet">
+        <DialogTitle className="sr-only">Workspace navigation</DialogTitle>
+        <DialogDescription className="sr-only">
+          Choose a project and workspace view.
+        </DialogDescription>
+        <Sidebar {...props} onNavigate={() => setOpen(false)} />
+        <DialogClose asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-3 top-3.5"
+            aria-label="Close navigation"
+          >
+            <X data-icon="inline-start" />
+          </Button>
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
   );
 }

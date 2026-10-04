@@ -81,6 +81,15 @@ proposals remain unconfirmed. The local actor is still the seeded product owner.
 Purple shared tokens and favicon; a manual project-state editor; document library;
 source-aware context search. Existing overview/attention views refresh after writes.
 
+The frontend follows [DESIGN.md](../../apps/web/DESIGN.md) with shared controls,
+semantic status chips and an accessible document browse/drop picker. Uploads
+remain explicit; selecting a file does not submit it. See the
+[UI validation report](../testing/frontend-design-system-results.md).
+
+![Document selection on desktop](images/document-library-desktop.png)
+
+![Document selection on mobile](images/document-library-mobile.png)
+
 ## AI behavior
 
 Embeddings support retrieval only. Uploaded documents and search results cannot
@@ -249,7 +258,6 @@ interpretations from retrieved evidence through human review; this feature does
 not infer or mutate baseline state.
 
 ![Purple context search showing separate baseline and evidence](images/memory-search-desktop.png)
-
 
 ### Indexing request correction
 

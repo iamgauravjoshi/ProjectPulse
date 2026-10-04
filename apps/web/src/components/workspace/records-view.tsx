@@ -10,6 +10,14 @@ import {
   recordRows,
 } from "../../features/workspace/presenters";
 import { EmptyCategory, Panel, StatusBadge } from "./primitives";
+import { Badge } from "../ui/badge";
+import { Field, FieldGroup, FieldLabel } from "../ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  NativeSelect,
+} from "../ui/input";
 
 const statuses = {
   decisions: [
@@ -39,39 +47,45 @@ export function RecordsView({
   return (
     <Panel
       title={label}
-      action={
-        <span className="text-[13px] text-muted">{rows.length} records</span>
-      }
+      action={<Badge variant="outline">{rows.length} records</Badge>}
     >
-      <div className="flex flex-col gap-3 border-b border-line p-4 sm:flex-row">
-        <label className="relative min-w-0 flex-1">
-          <span className="sr-only">Search {view}</span>
-          <Search
-            size={16}
-            aria-hidden="true"
-            className="absolute left-3 top-3 text-muted"
-          />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={`Search ${view}…`}
-            className="w-full rounded-lg border border-line bg-white py-2.5 pl-9 pr-3 text-sm"
-          />
-        </label>
-        <select
-          aria-label="Status"
-          value={status}
-          onChange={(event) => setStatus(event.target.value)}
-          className="rounded-lg border border-line bg-white px-3 py-2.5 text-sm text-ink"
-        >
-          <option value="ALL">All statuses</option>
-          {statuses[view].map((value) => (
-            <option value={value} key={value}>
-              {humanLabel(value)}
-            </option>
-          ))}
-        </select>
-      </div>
+      <FieldGroup className="border-b border-line p-5">
+        <Field orientation="horizontal">
+          <div className="min-w-0 flex-1">
+            <FieldLabel htmlFor={`search-${view}`} className="sr-only">
+              Search {view}
+            </FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <Search aria-hidden="true" />
+              </InputGroupAddon>
+              <InputGroupInput
+                id={`search-${view}`}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={`Search ${view}…`}
+              />
+            </InputGroup>
+          </div>
+          <div className="sm:w-48">
+            <FieldLabel htmlFor={`filter-${view}`} className="sr-only">
+              Status
+            </FieldLabel>
+            <NativeSelect
+              id={`filter-${view}`}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="ALL">All statuses</option>
+              {statuses[view].map((value) => (
+                <option value={value} key={value}>
+                  {humanLabel(value)}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+        </Field>
+      </FieldGroup>
       {rows.length === 0 ? (
         <EmptyCategory
           text={
@@ -102,9 +116,12 @@ export function RecordsView({
                   {row.source === "SEED" ? "Demo baseline" : "Project baseline"}
                 </p>
               </div>
-              <span className="self-start">
+              <div className="flex shrink-0 flex-wrap items-center gap-2 self-start">
+                {view === "risks" && (
+                  <StatusBadge status={row.owner} variant="outline" />
+                )}
                 <StatusBadge status={row.status} />
-              </span>
+              </div>
             </li>
           ))}
         </ul>
