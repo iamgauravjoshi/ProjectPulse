@@ -1,7 +1,8 @@
 # Phase 3 checkpoint results
 
-Started 4 October 2026 (Asia/Calcutta). Phase in progress; keep it off main until
-all required checkpoints and phase-wide acceptance pass.
+Started and accepted 4 October 2026 (Asia/Calcutta). Required file-ingestion steps
+are complete. Final CI must pass on the exact completion checkpoint before the
+authorized phase merge. Earlier sections preserve the per-step evidence.
 
 Branch: `phase/3-meeting-transcript-ingestion`. Base `e4836de` includes the shared
 frontend design system and [passing main CI](https://github.com/iamgauravjoshi/ProjectPulse/actions/runs/37180534874).
@@ -77,3 +78,36 @@ through persisted evidence. Ruff lint/format and strict mypy (51 source files) p
 All parser, scoped API, rollback, baseline and earlier phase regressions remain green.
 The adapter adds no network call or dependency and preserves the tested UI contract.
 Next: phase-wide browser/regression acceptance and final CI before merge.
+
+
+## Final review and phase-wide acceptance — complete
+
+All **51 browser tests** passed against the migrated local PostgreSQL database,
+covering the complete meeting → participant → upload → source citation → reload →
+delete flow alongside all earlier workspace, manual-state, document, search and
+design-system regressions. The final review added an explicit source speaker ID
+beside each JSON utterance so namesakes are distinguishable directly in the viewer.
+The strengthened repeated-name assertions and all **10 meeting browser tests**
+passed after that change; screenshots were refreshed and inspected again.
+
+The phase also passes **229 backend tests**, **43 frontend unit tests**, Ruff,
+strict mypy, frontend lint/types/format, Alembic schema drift and dependency audit
+(**zero vulnerabilities**). Local production acceptance uses webpack because of the
+previously documented cloud Turbopack socket restriction. The normal build command
+is unchanged and is verified by GitHub CI, including Linux full backend/frontend/
+browser checks and Windows frontend compatibility.
+
+The adapter checkpoint `3287e4750b96bde11dcddcadad7edb14b6673a2d` passed both
+[PR CI](https://github.com/iamgauravjoshi/ProjectPulse/actions/runs/37192950419) and
+[branch CI](https://github.com/iamgauravjoshi/ProjectPulse/actions/runs/37192948352).
+The final attribution/completion checkpoint must repeat those required CI checks
+successfully before merging [PR #4](https://github.com/iamgauravjoshi/ProjectPulse/pull/4)
+into main. Each tested step was pushed before the next began; retain the phase
+branch after merge. Phase 4 has not started.
+
+Optional Step 3.5 live streaming is explicitly deferred, as permitted by the brief;
+all required file-ingestion functionality is complete. No provider key or live AI
+acceptance is needed for deterministic file ingestion. Synthetic browser meetings
+are deleted after checks. No existing canonical records, documents, credentials or
+database volumes were reset. Production login/deployment and conferencing adapters
+remain documented limitations, not claims of completed functionality.

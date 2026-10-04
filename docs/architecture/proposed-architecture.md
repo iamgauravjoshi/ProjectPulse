@@ -90,15 +90,19 @@ Future confirmation must, in one database transaction:
 Reject/ignore leaves canonical state unchanged. A unique applied-candidate/action
 key makes repeated requests idempotent. No automatic external task writes occur.
 
-## Transcript and processing contracts (future phases)
+## Transcript ingestion and future processing
 
-`TranscriptSource.load(input)` returns validated utterances with speaker name,
-optional speaker ID, timestamp, sequence, text, and optional confidence. The file
-adapter supports structured text/JSON first; VTT follows only if practical. Vexa
-and Teams implement the same interface later. Unknown speakers remain explicit;
-speaker attribution does not automatically establish commitment ownership.
+Phase 3 implements `TranscriptAdapter[Source].parse(source) -> ParsedTranscript`
+in `app/services/transcript_adapters.py`. The file adapter accepts structured TXT,
+JSON and the documented VTT subset. It normalizes bounded utterances with speaker
+labels/IDs, elapsed milliseconds, source sequence, text and optional confidence.
+The scoped upload service retains immutable source bytes/hash and stable utterance
+citations without writing canonical state. Unknown speakers/times remain explicit;
+attribution does not establish commitment ownership. Future Vexa and Teams adapters
+can implement the protocol with their own source types; neither is active now.
+See [transcript ingestion](../features/transcript-ingestion.md).
 
-Processing uses bounded batches:
+Future processing phases will use bounded batches:
 
 1. Persist immutable project-scoped evidence and a processing-run identifier.
 2. Apply deterministic relevance rules, then classify ambiguous windows with context.

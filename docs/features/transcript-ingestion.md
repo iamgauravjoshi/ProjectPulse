@@ -1,6 +1,8 @@
 # Meetings and speaker-attributed transcript ingestion
 
-Status: Phase 3 in progress on `phase/3-meeting-transcript-ingestion`.
+Status: Phase 3 file-ingestion acceptance is complete. The implementation is
+checkpointed on `phase/3-meeting-transcript-ingestion` and merged through PR #4
+after final CI, retaining the phase branch for history.
 
 Meetings are evidence, not confirmed baseline changes. A meeting belongs to one
 project, has a title and optional timezone-aware start time, and records its human
@@ -104,7 +106,8 @@ and draft; fix/change the source and retry. Success persists through reload. A
 meeting's source is immutable; create a new meeting for a different transcript.
 
 The viewer separates participants from speaker-attributed utterances. It shows source
-filename, sequence, elapsed time/end time, readable text and supplied confidence;
+filename, sequence, elapsed time/end time, readable text, supplied confidence and
+explicit JSON speaker IDs beside their utterances, distinguishing repeated names;
 unknown time/speaker is labeled. **Link to utterance** creates a bookmarkable URL
 with project, meeting and stable utterance IDs. Opening that link selects the proper
 100-row page, scrolls to and focuses/highlights the utterance. A missing citation
@@ -138,3 +141,16 @@ or exposed as selectable UI actions. Future live integration must preserve scope
 validation budgets, immutable utterance citations and atomic audit before enabling
 its source. Step 3.5 live streaming is optional and deferred; no meeting-bot setup
 blocks the fully implemented file workflow.
+
+
+## Known limitations and phase boundary
+
+There is one immutable transcript per meeting and a latest-200-meeting list; saved
+citations can open older meetings. Registered participants freeze after upload.
+Name-only source labels cannot distinguish namesakes; use explicit JSON speakerId.
+The VTT parser supports the documented deterministic subset, not every captioning
+extension. No audio/video transcription, live stream, Vexa/Teams bot, external
+calendar synchronization, production auth or deployment is implemented. Phase 4
+relevance/AI processing has not started. Provider-ready interfaces and source links
+do not imply an active conferencing integration. No user data is sent to an AI
+provider during upload or viewing.

@@ -63,6 +63,12 @@ for (const file of formats)
       expect(detail.utterances.length).toBeGreaterThanOrEqual(2);
       if (file.name.endsWith("json")) {
         expect(detail.participants).toHaveLength(2);
+        await expect(
+          page.locator(`[id="utterance-${detail.utterances[0].id}"]`),
+        ).toContainText("Speaker ID: sarah-1");
+        await expect(
+          page.locator(`[id="utterance-${detail.utterances[1].id}"]`),
+        ).toContainText("Speaker ID: sarah-2");
         expect(detail.utterances[0].speakerId).not.toBe(
           detail.utterances[1].speakerId,
         );

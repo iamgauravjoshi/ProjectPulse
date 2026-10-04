@@ -260,53 +260,66 @@ function TranscriptViewer({
             <ol start={page * PAGE_SIZE + 1} className="flex flex-col gap-3">
               {meeting.utterances
                 .slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
-                .map((u) => (
-                  <li
-                    key={u.id}
-                    id={`utterance-${u.id}`}
-                    tabIndex={-1}
-                    aria-current={u.id === target ? "location" : undefined}
-                    ref={(element) => {
-                      if (element && u.id === target) {
-                        element.scrollIntoView({ block: "center" });
-                        element.focus({ preventScroll: true });
-                      }
-                    }}
-                    className={cn(
-                      "rounded-lg border border-line p-4",
-                      u.id === target && "border-accent bg-accent-soft",
-                    )}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h3 className="min-w-0 max-w-full text-sm font-semibold [overflow-wrap:anywhere]">
-                        {u.sequence + 1}. {u.speaker}
-                      </h3>
-                      <Button asChild variant="link" size="sm">
-                        <Link
-                          href={meetingHref(
-                            meeting.projectId,
-                            meeting.id,
-                            u.id,
-                          )}
-                          scroll={false}
-                        >
-                          <Link2 data-icon="inline-start" />
-                          Link to utterance {u.sequence + 1}
-                        </Link>
-                      </Button>
-                    </div>
-                    <p className="text-xs text-muted">
-                      {elapsedTime(u.timestampMs)}
-                      {u.endMs !== null ? ` – ${elapsedTime(u.endMs)}` : ""}
-                      {u.confidence !== null
-                        ? ` · Source confidence ${Math.round(u.confidence * 100)}%`
-                        : ""}
-                    </p>
-                    <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6">
-                      {u.text}
-                    </p>
-                  </li>
-                ))}
+                .map((u) => {
+                  const speakerKey = meeting.participants.find(
+                    (p) => p.id === u.speakerId,
+                  )?.speakerKey;
+                  const sourceId = speakerKey?.startsWith("id:")
+                    ? speakerKey.slice(3)
+                    : null;
+                  return (
+                    <li
+                      key={u.id}
+                      id={`utterance-${u.id}`}
+                      tabIndex={-1}
+                      aria-current={u.id === target ? "location" : undefined}
+                      ref={(element) => {
+                        if (element && u.id === target) {
+                          element.scrollIntoView({ block: "center" });
+                          element.focus({ preventScroll: true });
+                        }
+                      }}
+                      className={cn(
+                        "rounded-lg border border-line p-4",
+                        u.id === target && "border-accent bg-accent-soft",
+                      )}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h3 className="min-w-0 max-w-full text-sm font-semibold [overflow-wrap:anywhere]">
+                          {u.sequence + 1}. {u.speaker}
+                        </h3>
+                        <Button asChild variant="link" size="sm">
+                          <Link
+                            href={meetingHref(
+                              meeting.projectId,
+                              meeting.id,
+                              u.id,
+                            )}
+                            scroll={false}
+                          >
+                            <Link2 data-icon="inline-start" />
+                            Link to utterance {u.sequence + 1}
+                          </Link>
+                        </Button>
+                      </div>
+                      {sourceId && (
+                        <p className="mt-1 text-xs text-muted [overflow-wrap:anywhere]">
+                          Speaker ID: {sourceId}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted">
+                        {elapsedTime(u.timestampMs)}
+                        {u.endMs !== null ? ` – ${elapsedTime(u.endMs)}` : ""}
+                        {u.confidence !== null
+                          ? ` · Source confidence ${Math.round(u.confidence * 100)}%`
+                          : ""}
+                      </p>
+                      <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6">
+                        {u.text}
+                      </p>
+                    </li>
+                  );
+                })}
             </ol>
           </>
         )}
