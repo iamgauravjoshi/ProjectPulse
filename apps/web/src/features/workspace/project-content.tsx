@@ -1,11 +1,9 @@
 "use client";
 
 import { Alert } from "../../components/ui/feedback";
-import { MessageSquare } from "lucide-react";
 import { useCallback, useState } from "react";
 import {
   ErrorFeedback,
-  Feedback,
   WorkspaceSkeleton,
 } from "../../components/workspace/feedback";
 import { Overview } from "../../components/workspace/overview";
@@ -15,6 +13,7 @@ import { AttentionPanel } from "../../components/workspace/attention-panel";
 import { ReviewInbox } from "../../components/workspace/review-inbox";
 import { ContextSearch } from "../../components/memory/context-search";
 import { DocumentLibrary } from "../../components/memory/document-library";
+import { MeetingsView } from "../../components/meetings/meetings-view";
 import { StateEditor } from "../../components/memory/state-editor";
 import { loadWorkspace } from "./api";
 import type { ProjectSummary } from "./contracts";
@@ -68,14 +67,7 @@ export function ProjectContent({
   else if (view === "decisions" || view === "commitments" || view === "risks")
     content = <RecordsView key={view} workspace={resource.data} view={view} />;
   else if (view === "meetings")
-    content = (
-      <Feedback
-        title="Meeting evidence starts here"
-        description="Speaker-attributed conversations and the changes they suggest will live in this workspace."
-        icon={MessageSquare}
-        headingLevel={2}
-      />
-    );
+    content = <MeetingsView workspace={resource.data} />;
   else content = <ReviewInbox workspace={resource.data} />;
   return (
     <div className="mx-auto max-w-[1440px] p-5 lg:p-8">

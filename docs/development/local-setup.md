@@ -13,7 +13,7 @@ The shell examples use Bash; on Windows use Git Bash or WSL with Docker integrat
 
 ## First-time setup
 
-Clone the completed phase branch into your chosen folder:
+Clone the latest completed version from main into your chosen folder:
 
 ```sh
 git clone --branch main https://github.com/iamgauravjoshi/ProjectPulse.git
@@ -124,13 +124,14 @@ local work before switching branches.
 
 ProjectPulse is a web application. Developers run the frontend/backend locally;
 after a hosted deployment, users open the application URL in a browser and select
-a project. The completed Phase 1 version supports inspecting its baseline and follow-ups.
-The Phase 2 branch adds manual editing, document upload and source-aware context
-search. Later phases add transcript import and evidence-backed human review.
+a project. The workspace supports baseline inspection, manual editing, document
+memory/search and speaker-attributed meeting transcript upload. Later phases add
+AI interpretation and evidence-backed human review.
 Users will not need Node, Python or Docker to access a hosted version. A Windows
 executable is outside the current product plan.
 
-The current workspace is a local prototype with a fixed demo identity. Transcript ingestion and AI review actions are outside Phase 2.
+The current workspace is a local prototype with a fixed demo identity. AI processing
+and review actions remain future work.
 See the [Phase 1 report](../testing/phase-1-results.md) and
 [test commands](../../README.md#checks).
 
@@ -183,3 +184,39 @@ force an empty key, while provider contract tests use synthetic responses.
 If this cloud environment's Turbopack build fails with a socket EPERM, use the
 supported production builder `npm run build -- --webpack` from `apps/web`. The
 standard build remains unchanged for normal local and GitHub runners.
+
+
+## Updating to completed Phase 3
+
+Stop the frontend and backend with Ctrl+C in their terminals. From your ProjectPulse
+checkout, update main and keep your existing `.env` and database volume:
+
+```sh
+git switch main
+git pull --ff-only origin main
+cd apps/api
+uv sync --frozen
+uv run alembic upgrade head
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+In a second terminal at the checkout root:
+
+```sh
+cd apps/web
+npm ci
+npm run dev
+```
+
+Open `http://localhost:3000`, select your project and **Meetings**. Choose **New
+meeting**, enter a title, then open it and upload a UTF-8 TXT, JSON or VTT file.
+The [sample transcript](../examples/meeting-transcript.json) contains distinct
+speaker IDs, a repeated name and unknown time/speaker examples. The upload form
+also shows format examples. **Add participant** before upload optionally links a
+speaker to a project member. After upload, use **Link to utterance** to bookmark
+specific evidence; reload preserves the source and attribution.
+
+The additive `0005_meetings` migration preserves canonical state and existing
+documents. No new secret, domain allowlist, Gemini call, meeting-bot setup or database
+reset is required for file ingestion. This remains a browser application. Read the
+[transcript guide](../features/transcript-ingestion.md) for source formats/limits.

@@ -1,0 +1,25 @@
+{
+  "utterances": [
+    {
+      "speaker": "Sarah",
+      "speakerId": "sarah-1",
+      "timestamp": "00:01:10",
+      "text": "We need SSO in Phase 1. This statement is meeting evidence for later review."
+    },
+    {
+      "speaker": "John",
+      "speakerId": "john-1",
+      "timestamp": "00:01:20",
+      "text": "I will send the credentials Friday.",
+      "confidence": 0.92
+    },
+    {
+      "speaker": "Sarah",
+      "speakerId": "sarah-2",
+      "text": "I am a different Sarah. The source did not include my timestamp."
+    },
+    {
+      "text": "Speaker and time are unknown; no identity should be inferred."
+    }
+  ]
+}

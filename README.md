@@ -3,10 +3,13 @@
 Project intelligence and decision reconciliation. Meetings are evidence; the
 project state is the truth.
 
-Phases 0, 1 and 2 are complete. Phase 2 adds audited manual editing, a document
+Phases 0–3 are complete. Phase 2 adds audited manual editing, a document
 library, Gemini indexing and bounded context search in a purple theme. See the
 [project memory feature](docs/features/project-memory.md) and
 [Phase 2 results](docs/testing/phase-2-results.md).
+Phase 3 adds meetings, participants and deterministic TXT/JSON/VTT transcript
+ingestion with stable utterance citations. See [transcript ingestion](docs/features/transcript-ingestion.md)
+and [Phase 3 results](docs/testing/phase-3-results.md).
 
 The workspace reads the seeded PostgreSQL project
 through FastAPI and displays its trusted baseline, stakeholders, delivery
