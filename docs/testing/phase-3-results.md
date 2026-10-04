@@ -62,3 +62,18 @@ acceptance uses the already-installed Chromium through the existing executable-p
 configuration. The environment's shadcn registry fetch was blocked; existing local
 components and public docs read through Firecrawl were used without installing a
 competing library. No canonical data/credentials/volumes were reset.
+
+## Step 3.4 — complete
+
+Added typed, provider-independent `TranscriptAdapter[Source]`, immutable file input
+and implemented `FileTranscriptAdapter`. FastAPI injects the file adapter into the
+existing persistence service. Future Vexa/Teams integration boundaries are documented;
+no unavailable provider is implemented as a fake success or exposed in the UI.
+Optional live streaming is deferred in accordance with the original brief.
+
+**229 backend tests passed**: five new cases check all file formats against the
+contract, safe malformed-source failure and the actual HTTP injected-adapter boundary
+through persisted evidence. Ruff lint/format and strict mypy (51 source files) pass.
+All parser, scoped API, rollback, baseline and earlier phase regressions remain green.
+The adapter adds no network call or dependency and preserves the tested UI contract.
+Next: phase-wide browser/regression acceptance and final CI before merge.

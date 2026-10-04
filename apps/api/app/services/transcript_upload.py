@@ -7,15 +7,23 @@ from sqlalchemy.orm import Session
 
 from app.db.models import MeetingParticipant, Utterance
 from app.domain.manual_state import StateError
-from app.domain.transcripts import parse_transcript
 from app.services.meetings import audit, detail, find_meeting
+from app.services.transcript_adapters import (
+    FileTranscriptSource,
+    TranscriptAdapter,
+)
 
 
 def upload_transcript(
-    session: Session, project_id: UUID, meeting_id: UUID, filename: str, raw: bytes
+    session: Session,
+    project_id: UUID,
+    meeting_id: UUID,
+    filename: str,
+    raw: bytes,
+    adapter: TranscriptAdapter[FileTranscriptSource],
 ) -> dict[str, Any]:
     find_meeting(session, project_id, meeting_id)
-    parsed = parse_transcript(filename, raw)
+    parsed = adapter.parse(FileTranscriptSource(filename, raw))
     digest = sha256(raw).hexdigest()
     with session.begin_nested():
         meeting = find_meeting(session, project_id, meeting_id, lock=True)

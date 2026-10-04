@@ -120,3 +120,21 @@ failed drafts and protect pending writes. Long labels wrap at 375px.
 
 ![Transcript desktop](images/transcript-desktop.png)
 ![Transcript mobile](images/transcript-mobile.png)
+
+## Step 3.4 — adapter contract
+
+`TranscriptAdapter[Source]` defines `parse(source) -> ParsedTranscript`. Source types
+can differ by provider, but output must be bounded, validated, source-ordered
+utterances with explicit speaker/time/confidence unknowns and safe failures.
+`FileTranscriptSource` holds immutable filename/bytes; `FileTranscriptAdapter`
+implements the deterministic three-format parser without database, network or AI
+calls. The HTTP endpoint injects the server-selected file adapter; persistence,
+project access, locking, provenance and audit stay in the upload service.
+
+Future `VexaTranscriptAdapter` and `TeamsTranscriptAdapter` can implement the
+protocol with their own authenticated source types, explicit identity mapping,
+source retention and retry policy. They are deliberately not implemented, registered
+or exposed as selectable UI actions. Future live integration must preserve scope,
+validation budgets, immutable utterance citations and atomic audit before enabling
+its source. Step 3.5 live streaming is optional and deferred; no meeting-bot setup
+blocks the fully implemented file workflow.

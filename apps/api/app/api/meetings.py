@@ -11,6 +11,11 @@ from app.domain.meetings import MeetingFields, ParticipantFields
 from app.domain.transcripts import MAX_TRANSCRIPT_BYTES
 from app.services import meetings
 from app.services.project_access import require_project_access
+from app.services.transcript_adapters import (
+    FileTranscriptSource,
+    TranscriptAdapter,
+    get_file_transcript_adapter,
+)
 from app.services.transcript_upload import upload_transcript
 
 router = APIRouter(prefix="/api/v1/projects/{project_id}/meetings", tags=["meetings"])
@@ -52,6 +57,9 @@ async def upload(
     request: Request,
     session: Database,
     filename: Annotated[str, Query(min_length=1, max_length=240)],
+    adapter: Annotated[
+        TranscriptAdapter[FileTranscriptSource], Depends(get_file_transcript_adapter)
+    ],
 ) -> dict[str, Any]:
     await run_in_threadpool(require_project_access, session, project_id)
     await run_in_threadpool(meetings.find_meeting, session, project_id, meeting_id)
@@ -61,5 +69,5 @@ async def upload(
             raise StateError("TRANSCRIPT_SIZE", "Transcripts must be no larger than 2 MiB.", 413)
         body.extend(part)
     return await run_in_threadpool(
-        upload_transcript, session, project_id, meeting_id, filename, bytes(body)
+        upload_transcript, session, project_id, meeting_id, filename, bytes(body), adapter
     )
