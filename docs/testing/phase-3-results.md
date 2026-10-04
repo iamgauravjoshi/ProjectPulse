@@ -40,3 +40,25 @@ transcript, size/count/text/speaker budgets, explicit participant mapping, dupli
 immutability, project isolation, cascade, baseline preservation and audit rollback.
 Ruff lint/format and strict mypy (50 source files) pass. Previous phase regressions,
 migration rollback/reapply and metadata drift remain passing. No new dependency.
+
+## Step 3.3 — complete
+
+Replaced the Meetings placeholder with meeting creation, explicit participant/member
+registration, bounded upload, deletion confirmation and a paged evidence viewer.
+Stable utterance URLs open/focus/highlight the correct source row, including later
+pages. Invalid citations are explicit. Shared design-system controls and Radix
+focus behavior are retained; request failures preserve drafts/selections.
+
+**43 frontend unit tests passed**, including six new contract/proxy cases. **All 10
+meeting browser tests passed** with the real API/database: all three upload formats,
+unchanged canonical baseline, repeated names/distinct IDs, explicit participant
+mapping, reload/citations, long pagination, malformed upload/retry, confirmation,
+error retry and mobile keyboard/focus. An additional long-label mobile test exposed
+intrinsic flex width overflow; source labels now wrap and that test passes. Captures
+with synthetic evidence were inspected on desktop/375px and saved in feature docs.
+Lint, type checking, formatting and the production webpack build pass. Standard
+build remains unchanged and will be verified by phase-wide GitHub CI. Local browser
+acceptance uses the already-installed Chromium through the existing executable-path
+configuration. The environment's shadcn registry fetch was blocked; existing local
+components and public docs read through Firecrawl were used without installing a
+competing library. No canonical data/credentials/volumes were reset.

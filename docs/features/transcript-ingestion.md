@@ -89,3 +89,34 @@ re-upload returns the same IDs without another audit; a different source returns
 409, preserving existing citations. Create another meeting for a different source.
 Deletion removes all meeting evidence; uploads never modify canonical state or
 send transcript content to Gemini.
+
+## Step 3.3 — browser workflow
+
+Open **Meetings**, choose **New meeting**, enter its title and optionally a local
+start time. The browser records that time with its timezone; blank stays unknown.
+Before upload, **Add participant** can register an exact source label or JSON speaker
+ID and explicitly link it to a project member. Upload also creates unlinked source
+speakers automatically. Member matching is never inferred.
+
+Open a meeting, choose one TXT/JSON/VTT file, and explicitly **Upload transcript**.
+Format examples are available in the upload form. Failures retain the selected file
+and draft; fix/change the source and retry. Success persists through reload. A
+meeting's source is immutable; create a new meeting for a different transcript.
+
+The viewer separates participants from speaker-attributed utterances. It shows source
+filename, sequence, elapsed time/end time, readable text and supplied confidence;
+unknown time/speaker is labeled. **Link to utterance** creates a bookmarkable URL
+with project, meeting and stable utterance IDs. Opening that link selects the proper
+100-row page, scrolls to and focuses/highlights the utterance. A missing citation
+is explicit. Previous/next controls keep long transcripts usable.
+
+Lists/detail have loading, empty, error and retry states. Client schemas reject
+outside-project/meeting IDs, unknown participant references, duplicate IDs,
+out-of-order sequence and oversized evidence. Same-origin server proxies validate
+UUID paths and stream body limits before contacting FastAPI. React escapes source
+text rather than rendering uploaded HTML. Confirmed deletion removes evidence and
+participants with truthful audit retention. Dialogs trap/restore focus, preserve
+failed drafts and protect pending writes. Long labels wrap at 375px.
+
+![Transcript desktop](images/transcript-desktop.png)
+![Transcript mobile](images/transcript-mobile.png)
