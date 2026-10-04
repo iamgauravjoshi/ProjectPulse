@@ -45,7 +45,10 @@ test("overview to follow-up to review inbox preserves the baseline", async ({
   await panel.getByRole("link", { name: /Security review/ }).click();
   await expect(page).toHaveURL(/#milestones$/);
   await expect(
-    page.locator("#milestones").getByText("Pending launch dependency"),
+    page.locator('#milestones [data-status="PENDING"]'),
+  ).toBeVisible();
+  await expect(
+    page.locator("#milestones").getByText("Launch dependency"),
   ).toBeVisible();
   await page
     .getByRole("link", { name: "Open review inbox", exact: true })

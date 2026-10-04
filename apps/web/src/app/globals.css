@@ -12,9 +12,11 @@
   --color-accent-deep: #5b1ecf;
   --color-success: #026b3f;
   --color-success-soft: rgba(20, 158, 97, 0.16);
-  --color-warning: #92400e;
-  --color-warning-soft: #fffbeb;
+  --color-warning: #9a3412;
+  --color-warning-soft: #fff7ed;
   --color-danger: #b91c1c;
+  --color-danger-hover: #991b1b;
+  --color-danger-soft: #fef2f2;
   --color-neutral: #484b5e;
   --color-neutral-soft: rgba(104, 107, 130, 0.12);
   --font-display:
@@ -61,28 +63,7 @@ button:disabled {
 }
 
 @layer components {
-  .button-primary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-deep disabled:opacity-50;
-  }
-  .button-secondary {
-    @apply inline-flex items-center justify-center gap-2 min-h-11 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-medium text-ink hover:bg-surface-muted disabled:opacity-50;
-  }
-  .icon-button {
-    @apply flex h-11 w-11 items-center justify-center rounded-xl text-muted hover:bg-surface-muted hover:text-ink;
-  }
   .page-title {
     @apply font-display text-[28px] font-bold leading-[1.29] tracking-[-0.5px] text-ink sm:text-4xl sm:leading-[1.22];
-  }
-  .badge-success {
-    @apply bg-success-soft text-success;
-  }
-  .badge-warning {
-    @apply bg-warning-soft text-warning;
-  }
-  .badge-neutral {
-    @apply bg-neutral-soft text-neutral;
-  }
-  .skeleton {
-    @apply animate-pulse rounded-md bg-line/70 motion-reduce:animate-none;
   }
 }

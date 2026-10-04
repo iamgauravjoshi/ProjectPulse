@@ -133,8 +133,11 @@ test("missing Gemini configuration shows unavailable indexing and retains readab
       page.getByRole("alert", { name: "Library error" }),
     ).toContainText("Configure GEMINI_API_KEY");
     await expect(
-      page.getByRole("heading", { name, exact: true }).locator(".."),
-    ).toContainText("Index: unavailable");
+      page
+        .getByRole("heading", { name, exact: true })
+        .locator("..")
+        .locator('[data-status="UNAVAILABLE"]'),
+    ).toHaveText("Unavailable");
     await page
       .getByRole("button", { name: `Read ${name}`, exact: true })
       .click();

@@ -5,6 +5,7 @@ import {
   attentionCounts,
   attentionItems,
 } from "../../features/workspace/attention";
+import { Badge } from "../ui/badge";
 import { EmptyCategory, Panel, StatusBadge } from "./primitives";
 
 export function AttentionPanel({ workspace }: { workspace: Workspace }) {
@@ -15,12 +16,12 @@ export function AttentionPanel({ workspace }: { workspace: Workspace }) {
       title="Needs attention"
       icon={CircleAlert}
       action={
-        <span
+        <Badge
+          tone="warning"
           aria-label={`${items.length} items need attention`}
-          className="badge-warning rounded-md px-2 py-0.5 text-[13px] font-medium"
         >
           {items.length}
-        </span>
+        </Badge>
       }
     >
       {items.length === 0 ? (
@@ -54,7 +55,7 @@ export function AttentionPanel({ workspace }: { workspace: Workspace }) {
           ))}
         </ul>
       )}
-      <dl className="space-y-2 border-t border-line px-5 py-4 text-[13px]">
+      <dl className="flex flex-col gap-2 border-t border-line px-5 py-4 text-[13px]">
         <div className="flex justify-between gap-3">
           <dt className="text-muted">Decision reviews</dt>
           <dd>{counts.review}</dd>

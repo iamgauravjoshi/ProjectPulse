@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert } from "../../components/ui/feedback";
 import { MessageSquare } from "lucide-react";
 import { useCallback, useState } from "react";
 import {
@@ -84,13 +85,9 @@ export function ProjectContent({
         members={resource.status === "ready" ? resource.data.members : []}
       />
       {message && view === "state" && (
-        <p
-          role="status"
-          aria-label="Save feedback"
-          className="mb-4 rounded-lg bg-accent-soft p-3 text-sm text-accent"
-        >
+        <Alert variant="success" aria-label="Save feedback" className="mb-4">
           {message}
-        </p>
+        </Alert>
       )}
       {content}
     </div>

@@ -21,6 +21,8 @@ import {
   workspaceMetrics,
 } from "../../features/workspace/presenters";
 import { EmptyCategory, Panel, StatusBadge } from "./primitives";
+import { Badge } from "../ui/badge";
+import { Separator } from "../ui/feedback";
 import { milestoneDependencies } from "../../features/workspace/attention";
 
 export function Overview({
@@ -36,7 +38,7 @@ export function Overview({
     <>
       <section
         aria-label="Project statistics"
-        className="mb-7 grid grid-cols-2 overflow-hidden rounded-xl border border-line bg-white sm:grid-cols-4"
+        className="mb-7 grid grid-cols-2 overflow-hidden rounded-xl border border-line bg-surface sm:grid-cols-4"
       >
         {workspaceMetrics(workspace).map((metric) => (
           <div
@@ -51,13 +53,15 @@ export function Overview({
         ))}
       </section>
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
-        <div className="min-w-0 space-y-6">
+        <div className="min-w-0 flex flex-col gap-6">
           <Panel
             title="Current project state"
             icon={ShieldCheck}
             id="project-state"
             action={
-              <span className="text-[13px] text-muted">Trusted baseline</span>
+              <Badge tone="success" variant="outline">
+                Trusted baseline
+              </Badge>
             }
           >
             <div className="px-5 pb-1 pt-4">
@@ -164,12 +168,10 @@ export function Overview({
                 <EmptyCategory text="No risks recorded." />
               ) : (
                 workspace.risks.map((risk) => (
-                  <div key={risk.id} className="space-y-2 px-5 py-4">
+                  <div key={risk.id} className="flex flex-col gap-2 px-5 py-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <StatusBadge status={risk.severity} />
-                      <span className="text-[13px] text-muted">
-                        {humanLabel(risk.status)}
-                      </span>
+                      <StatusBadge status={risk.status} variant="outline" />
                     </div>
                     <h3 className="text-sm font-medium">{risk.title}</h3>
                     <p className="text-[13px] leading-6 text-muted">
@@ -185,9 +187,12 @@ export function Overview({
               ) : (
                 questions.map((question) => (
                   <div key={question.id} className="px-5 py-4">
-                    <h3 className="text-sm font-medium leading-6">
-                      {question.title}
-                    </h3>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-sm font-medium leading-6">
+                        {question.title}
+                      </h3>
+                      <StatusBadge status={question.status} variant="outline" />
+                    </div>
                     <p className="mt-2 text-[13px] text-muted">
                       Owner: {ownerName(workspace, question.ownerId)}
                     </p>
@@ -197,7 +202,7 @@ export function Overview({
             </Panel>
           </div>
         </div>
-        <div className="min-w-0 space-y-6">
+        <div className="min-w-0 flex flex-col gap-6">
           {attention}
           <Panel title="Milestones" icon={CalendarDays} id="milestones">
             {workspace.milestones.length === 0 ? (
@@ -219,16 +224,17 @@ export function Overview({
                   </p>
                   {milestoneDependencies(workspace, milestone.id).map(
                     (dependency) => (
-                      <div
-                        key={dependency.id}
-                        className="mt-4 border-t border-line pt-3"
-                      >
+                      <div key={dependency.id} className="mt-4">
+                        <Separator className="mb-3" />
                         <p className="text-[13px] font-medium text-ink">
                           {dependency.title}
                         </p>
-                        <p className="mt-1 text-[13px] text-muted">
-                          {humanLabel(dependency.status)} launch dependency
-                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <StatusBadge status={dependency.status} />
+                          <span className="text-[13px] text-muted">
+                            Launch dependency
+                          </span>
+                        </div>
                       </div>
                     ),
                   )}
@@ -238,7 +244,7 @@ export function Overview({
           </Panel>
           <Panel title="Recent meeting impact" icon={MessageSquare}>
             <div className="px-5 py-6">
-              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-surface-muted text-muted">
+              <div className="mb-4 flex size-9 items-center justify-center rounded-lg bg-surface-muted text-muted">
                 <MessageSquare size={18} aria-hidden="true" />
               </div>
               <h3 className="text-sm font-medium">
@@ -260,7 +266,7 @@ export function Overview({
             {workspace.activity.length === 0 ? (
               <EmptyCategory text="No project activity yet." />
             ) : (
-              <ol className="space-y-5 px-5 py-5">
+              <ol className="flex flex-col gap-5 px-5 py-5">
                 {workspace.activity.map((event) => (
                   <li key={event.id} className="flex items-start gap-3">
                     <CheckCircle2

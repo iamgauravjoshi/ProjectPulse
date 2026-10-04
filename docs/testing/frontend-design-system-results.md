@@ -1,48 +1,67 @@
-# Frontend design system checkpoint
+# Frontend design system completion
 
-## Scope
+## Scope and acceptance
 
-Added `apps/web/DESIGN.md` as the project-specific frontend guide and linked it
-from the repository README. Adapted the supplied Kraken reference to the existing
-ProjectPulse Next.js/Tailwind/Radix architecture and compact workspace layout.
+Applied `apps/web/DESIGN.md` throughout ProjectPulse's nine existing workspace
+views. Shared project-owned components in `src/components/ui` now provide buttons,
+filled/outlined badges, cards, Field-based forms, inputs, feedback, skeletons and
+Radix dialog/select wrappers. Existing navigation, state contracts, canonical
+records and explicit-save audit semantics remain intact.
 
-Centralized the purple/cool-gray palette, positive/warning/neutral/error colors,
-font roles and elevation tokens in `globals.css`. Updated shared actions to 12px
-corners with 44px targets, responsive project headings, status badges, dialog/menu
-shadows, error text and favicon. Improved the state editor's narrow-screen selector.
-The system font stack remains local because proprietary Kraken fonts are not
-provided. Status classifications and all data/API contracts remain unchanged.
+- High/critical risks, blocked/at-risk/overdue states and failures use red chips.
+- Pending/review states, medium severity and missing delivery dates use orange.
+- Active, confirmed, ready, done, completed, indexed and resolved states use green.
+- Informational states use purple; inactive/unavailable states use neutral gray.
+- State editor, overview, lists, review inbox, document indexing and context facts
+  share one presentation map, including separate lifecycle/severity chips.
+- Destructive actions use red outlined controls and red confirmation buttons.
+- Document selection uses a styled browse/drop area, selected filename/size,
+  change/remove controls and an explicit upload action. Keyboard browsing,
+  supported formats, nonempty/5 MiB limits, pending state and failure feedback
+  remain accessible. Selection alone never uploads or changes project state.
+- Shell, panels, dialogs, search, forms, loading and empty states follow the shared
+  palette, typography, 12px action radius and responsive conventions. The sidebar
+  can scroll on shorter screens.
+
+The repository's shadcn skill and official Button/Badge/Field/Input/Dialog docs
+informed the component composition. Registry CLI calls were blocked by the managed
+network policy. Source components are local adaptations using the existing Radix
+foundation, not claimed as generated upstream components. Added pinned Radix Slot,
+clsx and tailwind-merge dependencies support composition and class merging.
 
 ## Validation
 
-| Check                                     | Result                                                                                                                                                      |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run lint`                            | Passed                                                                                                                                                      |
-| `npm run typecheck`                       | Passed                                                                                                                                                      |
-| `npm run format:check`                    | Passed                                                                                                                                                      |
-| `npm test`                                | Passed: 37 tests in 5 files                                                                                                                                 |
-| `npm run build -- --webpack`              | Passed: optimized production build                                                                                                                          |
-| `npm run build` (Turbopack)               | Environment blocked: CSS worker loopback binding returns `Operation not permitted`, including permission retry                                              |
-| Browser review against production Next.js | Passed: all 9 workspace views at 375, 425, 768, 1024, 1280 and 1536px (54 combinations)                                                                     |
-| Browser interaction checks                | Passed: record dialog boundaries, Escape/focus restoration, mobile drawer, desktop help dialog, 44px/12px primary button styling and no horizontal overflow |
-| Visual inspection                         | Reviewed overview screenshots at 375px and 1280px                                                                                                           |
-| `git diff --check`                        | Passed                                                                                                                                                      |
+| Check                          | Result                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `npm run build`                | Passed: standard Turbopack optimized production build                                                                    |
+| `npm run lint`                 | Passed                                                                                                                   |
+| `npm run typecheck`            | Passed                                                                                                                   |
+| `npm run format:check`         | Passed                                                                                                                   |
+| `npm test`                     | Passed: 37 tests in 5 files                                                                                              |
+| `npm audit --audit-level=high` | Passed: zero vulnerabilities                                                                                             |
+| `npm run test:e2e`             | Passed: all 41 tests against production Next.js, FastAPI and isolated seeded PostgreSQL                                  |
+| Responsive browser review      | Passed: all 9 views at 375, 425, 768, 1024, 1280 and 1536px (54 combinations), with no horizontal overflow               |
+| Keyboard/dialog review         | Passed: record dialog boundaries, Escape and focus restoration, mobile drawer, desktop help and 44px/12px button styling |
+| Visual review                  | Desktop/mobile overview and redesigned document selection; refreshed feature preview images                              |
+| `git diff --check`             | Passed                                                                                                                   |
 
-Browser validation used the existing synthetic `tests/fixtures/workspace.json`
-with intercepted workspace API responses and an empty document library. It ran
-against the webpack production build using system Chromium. The temporary review
-script and screenshots live under `/tmp` and are not committed. The review did not
-submit mutations. Full database-backed Playwright coverage was not run; the seeded
-PostgreSQL/FastAPI test setup was not provisioned for this styling checkpoint.
+The browser suite covers real uploads in all four document formats, deduplication,
+provenance, deletion, all six record create/edit/delete flows, stale drafts, context
+search, project isolation, keyboard navigation, loading/retry states and responsive
+behavior. New cases verify rendered semantic chip colors, keyboard file browsing,
+selection removal, invalid files and drag selection without automatic submission.
+Two existing assertions were updated to target chips replacing plain status text.
 
-## Acceptance and regression review
+Tests used an isolated `projectpulse_ui_test` PostgreSQL database on port 54339 in
+a dedicated container, migrated and explicitly seeded for this task. Existing data
+and volumes were not used or modified. No live Gemini call was made; unconfigured
+indexing remains truthfully represented and covered by regression tests.
 
-- Frontend guide documents the real architecture, token values, typography,
-  components, responsive behavior, accessibility and agent conventions.
-- Implemented shared visual rules agree with the guide and preserve existing
-  navigation, business logic, record classification and explicit-save semantics.
-- Existing unit/static checks and production compilation pass with the documented
-  environment workaround. Mobile and desktop layouts were inspected in Chromium.
-- No dependency, schema, credential, canonical record or database volume changes.
+A pre-existing deeply nested glob unit case timed out once while multiple browser
+checks were consuming CPU; it passed when rerun without that concurrent load.
+No timeout thresholds or unrelated implementation were changed.
 
-This is a Phase 2 frontend refinement; it does not start the next product phase.
+All work remains a Phase 2 UI refinement; no new product phase, backend behavior,
+schema, identity, credential or deployment changes were introduced. The branch is
+`phase/2-frontend-design-system`; merge through a pull request after its CI checks
+succeed, retaining the branch for history.

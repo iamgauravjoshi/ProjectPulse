@@ -1,4 +1,13 @@
 import { CircleAlert, FolderOpen, type LucideIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyMedia,
+  EmptyTitle,
+  Skeleton,
+} from "../ui/feedback";
 
 export function Feedback({
   title,
@@ -15,17 +24,18 @@ export function Feedback({
 }) {
   const Heading = headingLevel === 1 ? "h1" : headingLevel === 2 ? "h2" : "h3";
   return (
-    <section className="mx-auto flex max-w-md flex-col items-center px-6 py-16 text-center">
-      <div className="mb-5 rounded-xl bg-surface-muted p-3">
-        <Icon size={24} aria-hidden="true" className="text-muted" />
-      </div>
-      <Heading className="text-xl font-semibold text-ink">{title}</Heading>
-      <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
-      {action && <div className="mt-5">{action}</div>}
-    </section>
+    <Empty>
+      <EmptyMedia>
+        <Icon aria-hidden="true" />
+      </EmptyMedia>
+      <EmptyTitle asChild>
+        <Heading>{title}</Heading>
+      </EmptyTitle>
+      <EmptyDescription>{description}</EmptyDescription>
+      {action && <div className="mt-2">{action}</div>}
+    </Empty>
   );
 }
-
 export function ErrorFeedback({
   title,
   retry,
@@ -41,36 +51,33 @@ export function ErrorFeedback({
       headingLevel={headingLevel}
       description="Check your connection and try again."
       icon={CircleAlert}
-      action={
-        <button type="button" className="button-primary" onClick={retry}>
-          Try again
-        </button>
-      }
+      action={<Button onClick={retry}>Try again</Button>}
     />
   );
 }
-
 export function WorkspaceSkeleton() {
   return (
     <div
       role="status"
       aria-label="Loading workspace"
-      className="space-y-7 p-6 lg:p-8"
+      className="flex flex-col gap-7 p-6 lg:p-8"
     >
       <span className="sr-only">Loading workspace</span>
-      <div className="skeleton h-7 w-64 max-w-full" />
-      <div className="skeleton h-4 w-96 max-w-full" />
+      <Skeleton className="h-7 w-64 max-w-full" />
+      <Skeleton className="h-4 w-96 max-w-full" />
       <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
         {[1, 2, 3, 4].map((key) => (
-          <div className="skeleton h-24" key={key} />
+          <Skeleton className="h-24" key={key} />
         ))}
       </div>
-      <div className="rounded-xl border border-line bg-white p-5">
-        <div className="skeleton mb-7 h-5 w-40" />
-        {[1, 2, 3, 4].map((key) => (
-          <div className="skeleton my-5 h-10" key={key} />
-        ))}
-      </div>
+      <Card>
+        <CardContent>
+          <Skeleton className="mb-7 h-5 w-40" />
+          {[1, 2, 3, 4].map((key) => (
+            <Skeleton className="my-5 h-10" key={key} />
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

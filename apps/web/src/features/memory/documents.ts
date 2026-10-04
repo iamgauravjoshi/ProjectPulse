@@ -45,3 +45,13 @@ export async function loadDocuments(projectId: string, signal: AbortSignal) {
     throw new Error("Outside project evidence");
   return docs;
 }
+
+export function validateDocumentFile(
+  file: Pick<File, "name" | "size">,
+): string | null {
+  if (file.size === 0 || file.size > 5242880)
+    return "Choose a nonempty file no larger than 5 MiB.";
+  if (!/\.(pdf|docx|txt|md|markdown)$/i.test(file.name))
+    return "Choose a PDF, DOCX, TXT or Markdown document.";
+  return null;
+}
