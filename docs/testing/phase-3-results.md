@@ -22,3 +22,21 @@ validation, audit rollback, cascade, utterance bounds and partial-source rejecti
 The full suite also verifies migration downgrade/reapply and metadata drift.
 Ruff lint/format and strict mypy (48 source files) passed. Baseline records are
 unchanged by meeting evidence. No frontend behavior changed at this checkpoint.
+
+## Step 3.2 — complete
+
+Added bounded deterministic TXT/JSON/VTT ingestion, original-source hash/bytes,
+immutable utterance IDs, explicit/name-based participant attribution and raw-byte
+upload. Meeting row locks serialize upload/participant changes. Duplicate input
+preserves IDs and audit counts; different input is rejected without replacement.
+Control characters, invalid UTF-8, duplicate JSON fields, nonfinite confidence,
+conflicting identities and invalid times fail safely. VTT presentation markup is
+parsed as text; no external calls or canonical mutations occur.
+
+**224 backend tests passed**, including 44 new parser/upload scenarios. Acceptance
+covers two/ten speakers, repeated names with distinct IDs, unknown speakers, missing
+timestamps, source order, multiline VTT, all source formats, a 10,000-utterance
+transcript, size/count/text/speaker budgets, explicit participant mapping, duplicate
+immutability, project isolation, cascade, baseline preservation and audit rollback.
+Ruff lint/format and strict mypy (50 source files) pass. Previous phase regressions,
+migration rollback/reapply and metadata drift remain passing. No new dependency.
