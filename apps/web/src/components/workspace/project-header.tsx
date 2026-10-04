@@ -28,9 +28,7 @@ export function ProjectHeader({
             <CircleCheck size={15} aria-hidden="true" />
             {navigation.find((item) => item.id === view)?.label}
           </p>
-          <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-ink">
-            {project.name}
-          </h1>
+          <h1 className="page-title">{project.name}</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
             {project.description}
           </p>

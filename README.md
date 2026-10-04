@@ -39,6 +39,9 @@ deployment will provide a web URL. A Windows `.exe` is outside the current scope
 The [working agreement](AGENTS.md) requires a push after every tested/documented
 step and a merge into `main` only after the entire phase is complete.
 
+The frontend design system and component conventions are documented in
+[apps/web/DESIGN.md](apps/web/DESIGN.md).
+
 Frontend, from `apps/web`:
 
 ```sh

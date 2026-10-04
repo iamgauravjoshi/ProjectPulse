@@ -17,7 +17,7 @@ export function AttentionPanel({ workspace }: { workspace: Workspace }) {
       action={
         <span
           aria-label={`${items.length} items need attention`}
-          className="rounded-md bg-amber-50 px-2 py-0.5 text-[13px] font-medium text-amber-800"
+          className="badge-warning rounded-md px-2 py-0.5 text-[13px] font-medium"
         >
           {items.length}
         </span>

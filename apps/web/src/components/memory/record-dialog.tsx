@@ -152,7 +152,7 @@ export function RecordDialog({
             e.preventDefault();
             opener.current?.focus();
           }}
-          className="fixed left-1/2 top-1/2 z-50 max-h-[85dvh] w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
+          className="fixed left-1/2 top-1/2 z-50 max-h-[85dvh] w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-subtle"
         >
           <Dialog.Title className="text-xl font-semibold">{title}</Dialog.Title>
           <Dialog.Description className="mt-2 text-sm text-muted">
@@ -167,7 +167,7 @@ export function RecordDialog({
               ...Object.entries(fields[kind]).map(([k, v]) => field(k, v)),
             ]}
             {error && (
-              <p role="alert" className="text-sm text-red-700">
+              <p role="alert" className="text-sm text-danger">
                 {error.message}
               </p>
             )}

@@ -26,7 +26,7 @@ export function ProjectSelector({
         <Select.Trigger
           aria-label="Project"
           title={selected?.name}
-          className="flex w-full items-center gap-2 rounded-lg border border-line bg-white px-3 py-2.5 text-left text-sm text-ink hover:bg-surface-muted disabled:opacity-60"
+          className="flex w-full items-center min-h-11 gap-2 rounded-xl border border-line bg-white px-3 py-2.5 text-left text-sm text-ink hover:bg-surface-muted disabled:opacity-60"
         >
           <Folder
             size={16}
@@ -46,7 +46,7 @@ export function ProjectSelector({
           <Select.Content
             position="popper"
             sideOffset={5}
-            className="z-[70] max-h-72 min-w-[var(--radix-select-trigger-width)] max-w-[calc(100vw-32px)] overflow-hidden rounded-lg border border-line bg-white p-1 shadow-lg"
+            className="z-[70] max-h-72 min-w-[var(--radix-select-trigger-width)] max-w-[calc(100vw-32px)] overflow-hidden rounded-lg border border-line bg-white p-1 shadow-micro"
           >
             <Select.Viewport>
               {projects.map((project) => (

@@ -81,7 +81,7 @@ export function ContextSearch({ workspace }: { workspace: Workspace }) {
         <p
           role="alert"
           aria-label="Search error"
-          className="my-4 text-sm text-red-700"
+          className="my-4 text-sm text-danger"
         >
           {error}
         </p>

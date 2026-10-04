@@ -137,7 +137,7 @@ export function DocumentLibrary({ projectId }: { projectId: string }) {
         <p
           role="alert"
           aria-label="Library error"
-          className="mb-4 text-sm text-red-700"
+          className="mb-4 text-sm text-danger"
         >
           {error}
         </p>
@@ -276,7 +276,7 @@ function DocumentDialog({
             e.preventDefault();
             heading.current?.focus();
           }}
-          className="fixed left-1/2 top-1/2 z-50 max-h-[85dvh] w-[calc(100%-32px)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
+          className="fixed left-1/2 top-1/2 z-50 max-h-[85dvh] w-[calc(100%-32px)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-6 shadow-subtle"
         >
           <Dialog.Title
             tabIndex={-1}
@@ -324,7 +324,7 @@ function DocumentDialog({
             <p
               role="alert"
               aria-label="Library error"
-              className="my-4 text-sm text-red-700"
+              className="my-4 text-sm text-danger"
             >
               {error}
             </p>

@@ -21,7 +21,7 @@ export function StatusBadge({ status }: { status: string }) {
   ].includes(status);
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-md px-2 py-0.5 text-[13px] font-medium ${positive ? "bg-accent-soft text-accent" : warning ? "bg-amber-50 text-amber-800" : "bg-surface-muted text-muted"}`}
+      className={`inline-flex shrink-0 items-center rounded-md px-2 py-0.5 text-[13px] font-medium ${positive ? "badge-success" : warning ? "badge-warning" : "badge-neutral"}`}
     >
       {humanLabel(status)}
     </span>

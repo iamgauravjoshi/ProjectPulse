@@ -15,14 +15,14 @@ export function HelpDialog() {
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-muted hover:bg-surface-muted hover:text-ink"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-muted hover:bg-surface-muted hover:text-ink"
         >
           <CircleHelp size={18} aria-hidden="true" /> How ProjectPulse works
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/30" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border border-line bg-white p-7 shadow-xl">
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border border-line bg-white p-7 shadow-subtle">
           <Dialog.Title className="pr-6 text-xl font-semibold text-ink">
             From conversation to confirmed state
           </Dialog.Title>

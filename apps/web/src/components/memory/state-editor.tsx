@@ -45,7 +45,7 @@ export function StateEditor({
       <label className="my-5 block text-sm font-medium">
         Record type
         <select
-          className="ml-3 rounded border border-line p-2"
+          className="mt-2 block w-full rounded-lg border border-line bg-surface p-2 sm:ml-3 sm:mt-0 sm:inline-block sm:w-auto"
           aria-label="Record type"
           value={kind}
           onChange={(e) => {
