@@ -31,17 +31,17 @@ phases. No later phase starts without its own checkpoint.
 
 ## Proposed technical decisions
 
-| Boundary | Proposed choice | Reason |
-| --- | --- | --- |
-| Frontend | Next.js App Router, React, TypeScript, Tailwind; shadcn/ui and Lucide in Phase 1 | Matches the brief and supports a consistent SaaS workspace |
-| Backend | FastAPI + Python 3.12, Pydantic | Typed APIs and straightforward later document parsing/AI contracts |
-| Persistence | PostgreSQL + pgvector; SQLAlchemy 2 and Alembic | One relational/vector database with explicit migrations |
-| Dependency management | npm with committed lockfile; uv with committed lockfile | Simple reproducible installation with tools available here |
-| Backend checks | pytest, Ruff, mypy | Deterministic unit/integration checks and static validation |
-| Frontend checks | ESLint, TypeScript, Prettier; Playwright smoke test | Build and browser verification before product UI |
-| Runtime | Two application processes and one local PostgreSQL service | No message bus, microservice split, or dedicated vector database |
-| Authentication | Local development with a fixed demo actor; defer real authentication | Keep this checkpoint achievable; do not expose the prototype publicly as authenticated |
-| Optional task integration | GitHub Issues, deferred to its phase | One adapter; core application remains independent |
+| Boundary                  | Proposed choice                                                                  | Reason                                                                                 |
+| ------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Frontend                  | Next.js App Router, React, TypeScript, Tailwind; shadcn/ui and Lucide in Phase 1 | Matches the brief and supports a consistent SaaS workspace                             |
+| Backend                   | FastAPI + Python 3.12, Pydantic                                                  | Typed APIs and straightforward later document parsing/AI contracts                     |
+| Persistence               | PostgreSQL + pgvector; SQLAlchemy 2 and Alembic                                  | One relational/vector database with explicit migrations                                |
+| Dependency management     | npm with committed lockfile; uv with committed lockfile                          | Simple reproducible installation with tools available here                             |
+| Backend checks            | pytest, Ruff, mypy                                                               | Deterministic unit/integration checks and static validation                            |
+| Frontend checks           | ESLint, TypeScript, Prettier; Playwright smoke test                              | Build and browser verification before product UI                                       |
+| Runtime                   | Two application processes and one local PostgreSQL service                       | No message bus, microservice split, or dedicated vector database                       |
+| Authentication            | Local development with a fixed demo actor; defer real authentication             | Keep this checkpoint achievable; do not expose the prototype publicly as authenticated |
+| Optional task integration | GitHub Issues, deferred to its phase                                             | One adapter; core application remains independent                                      |
 
 Dependency versions will be selected for compatibility and locked when the
 skeleton is created. Pin the pgvector-enabled database image to a tested version

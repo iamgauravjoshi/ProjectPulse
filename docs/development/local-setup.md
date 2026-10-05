@@ -104,6 +104,9 @@ unresolved.
 
 ## Upgrading an existing local installation
 
+Read the PostgreSQL compatibility section below before starting Compose after an
+update. Application migrations and PostgreSQL major-version upgrades are separate.
+
 Keep your existing `.env` and its database credentials/name. Renaming the product
 does not require renaming a PostgreSQL role or database. Seed UUIDs are stable, so
 existing bookmarks, memberships and edited baseline records remain valid.
@@ -119,6 +122,33 @@ delete the original volume or overwrite your `.env` with the new sample.
 Once a phase has merged, update your local source with `git fetch origin` followed
 by `git switch main` and `git pull --ff-only origin main`. Preserve any uncommitted
 local work before switching branches.
+
+### PostgreSQL image and volume compatibility
+
+New installations default to pgvector 0.8.7/PostgreSQL 18, pinned by digest, with
+the named volume mounted at `/var/lib/postgresql`. PostgreSQL 18 stores its cluster
+at `/var/lib/postgresql/18/docker`. See the
+[official image documentation](https://github.com/docker-library/docs/blob/master/postgres/README.md#pgdata).
+An existing PostgreSQL 18 installation using this layout needs no volume change.
+
+For an existing PostgreSQL 17 installation, preserve its original volume and add
+both settings to your existing root `.env` before starting Compose:
+
+```dotenv
+POSTGRES_IMAGE=pgvector/pgvector:0.8.1-pg17@sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21
+POSTGRES_DATA_TARGET=/var/lib/postgresql/data
+```
+
+Keep your existing `POSTGRES_DATA_VOLUME`, credentials and database name. These
+settings retain the previously tested PostgreSQL 17 image and its original mount;
+they do not perform a database upgrade. Set image and mount together. Inspect the
+existing container's image and mount in Docker Desktop if unsure which layout it uses.
+
+Never point PostgreSQL 18 directly at a PostgreSQL 17 cluster or delete a volume
+to resolve a version mismatch. A deliberate major upgrade requires a verified
+backup and PostgreSQL's supported dump/restore or `pg_upgrade` procedure into a
+separate target cluster. This source update does not perform that migration.
+Alembic upgrades application tables within the current PostgreSQL version.
 
 ## How people use the application
 
