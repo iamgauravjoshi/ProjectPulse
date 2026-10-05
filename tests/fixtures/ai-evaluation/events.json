@@ -1,0 +1,21 @@
+{
+  "note": "Manually labeled synthetic extraction examples. Contract fixtures are not live quality evidence.",
+  "items": [
+    {"text":"Can we move SSO from Phase 2 to Phase 1?","kind":"REQUIREMENT_CHANGE","statement":"PROPOSAL","ownerMention":null,"dueDateText":null},
+    {"text":"SSO remains in Phase 2.","kind":"REQUIREMENT_CHANGE","statement":"STATEMENT","ownerMention":null,"dueDateText":null},
+    {"text":"Let's use PostgreSQL for the project.","kind":"DECISION","statement":"PROPOSAL","ownerMention":null,"dueDateText":null},
+    {"text":"We agreed to keep CSV export synchronous.","kind":"DECISION","statement":"STATEMENT","ownerMention":null,"dueDateText":null},
+    {"text":"John will provide production credentials tomorrow.","kind":"COMMITMENT","statement":"STATEMENT","ownerMention":"John","dueDateText":"tomorrow"},
+    {"text":"I will provide production credentials.","kind":"COMMITMENT","statement":"STATEMENT","ownerMention":"I","dueDateText":null},
+    {"text":"Someone needs to handle the payment retries.","kind":"COMMITMENT","statement":"PROPOSAL","ownerMention":null,"dueDateText":null},
+    {"text":"I cannot promise production credentials by Friday.","kind":"COMMITMENT","statement":"NEGATED","ownerMention":"I","dueDateText":"Friday"},
+    {"text":"The security review might delay launch.","kind":"RISK","statement":"STATEMENT","ownerMention":null,"dueDateText":null},
+    {"text":"Move the launch date to November 10.","kind":"MILESTONE_CHANGE","statement":"PROPOSAL","ownerMention":null,"dueDateText":"November 10"},
+    {"text":"The launch date is not changing.","kind":"MILESTONE_CHANGE","statement":"NEGATED","ownerMention":null,"dueDateText":null},
+    {"text":"Deployment is blocked by the security review.","kind":"DEPENDENCY","statement":"STATEMENT","ownerMention":null,"dueDateText":null},
+    {"text":"Who owns the security review?","kind":"OPEN_QUESTION","statement":"QUESTION","ownerMention":null,"dueDateText":null},
+    {"text":"Do we need an asynchronous CSV export?","kind":"OPEN_QUESTION","statement":"QUESTION","ownerMention":null,"dueDateText":null},
+    {"text":"🚀 Sarah Chen will review SSO on 2026-10-09.","kind":"COMMITMENT","statement":"STATEMENT","ownerMention":"Sarah Chen","dueDateText":"2026-10-09"},
+    {"text":"Good morning everyone.","kind":null,"statement":null,"ownerMention":null,"dueDateText":null}
+  ]
+}
