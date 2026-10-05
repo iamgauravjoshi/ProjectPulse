@@ -37,6 +37,7 @@ import {
 import { ErrorFeedback } from "../workspace/feedback";
 import { cn } from "../../lib/utils";
 import { MeetingImpact } from "./meeting-impact";
+import { EventCandidates } from "./event-candidates";
 
 export function MeetingDetailView({
   projectId,
@@ -54,6 +55,7 @@ export function MeetingDetailView({
     [projectId, meetingId],
   );
   const resource = useResource(load);
+  const [eventRevision, setEventRevision] = useState(0);
   return resource.status === "loading" ? (
     <Skeleton className="h-40" aria-label="Loading transcript" />
   ) : resource.status === "error" ? (
@@ -64,7 +66,11 @@ export function MeetingDetailView({
     />
   ) : (
     <>
-      <MeetingImpact meeting={resource.data} />
+      <MeetingImpact
+        meeting={resource.data}
+        onAnalyzed={() => setEventRevision((x) => x + 1)}
+      />
+      <EventCandidates meeting={resource.data} revision={eventRevision} />
       <TranscriptViewer
         meeting={resource.data}
         members={members}

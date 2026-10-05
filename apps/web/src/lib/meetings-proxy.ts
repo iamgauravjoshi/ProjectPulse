@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { sameOrigin } from "./memory-proxy";
+import { eventKinds } from "../features/meetings/events";
 
 export async function proxyMeetings(
   request: Request,
   params: { projectId: string; meetingId?: string },
-  action?: "participants" | "transcript" | "relevance",
+  action?: "participants" | "transcript" | "relevance" | "events",
 ) {
   if (
     !z.uuid().safeParse(params.projectId).success ||
@@ -27,6 +28,23 @@ export async function proxyMeetings(
     );
   const query = new URL(request.url).searchParams;
   let relevanceQuery = "";
+  if (action === "events") {
+    const options = z
+      .object({
+        page: z.coerce.number().int().min(1).max(400),
+        kind: z.enum(["ALL", ...eventKinds]),
+      })
+      .safeParse({
+        page: query.get("page") ?? "1",
+        kind: query.get("kind") ?? "ALL",
+      });
+    if (!options.success)
+      return Response.json(
+        { error: { message: "Choose a valid event page and filter." } },
+        { status: 422 },
+      );
+    relevanceQuery = `?page=${options.data.page}&kind=${options.data.kind}`;
+  }
   if (action === "relevance") {
     const options = z
       .object({
@@ -48,7 +66,11 @@ export async function proxyMeetings(
     let body: Uint8Array | undefined;
     if (request.method === "POST") {
       const limit =
-        action === "transcript" ? 2097152 : action === "relevance" ? 0 : 65536;
+        action === "transcript"
+          ? 2097152
+          : action === "relevance" || action === "events"
+            ? 0
+            : 65536;
       const reader = request.body?.getReader();
       const chunks: Uint8Array[] = [];
       let size = 0;
@@ -64,8 +86,8 @@ export async function proxyMeetings(
                   message:
                     action === "transcript"
                       ? "Transcripts must be no larger than 2 MiB."
-                      : action === "relevance"
-                        ? "Relevance analysis uses server context; send no body."
+                      : action === "relevance" || action === "events"
+                        ? "Analysis uses server context; send no body."
                         : "Meeting fields are too large.",
                 },
               },
@@ -75,7 +97,10 @@ export async function proxyMeetings(
           size += result.value.byteLength;
           chunks.push(result.value);
         }
-      body = action === "relevance" ? undefined : new Uint8Array(size);
+      body =
+        action === "relevance" || action === "events"
+          ? undefined
+          : new Uint8Array(size);
       let offset = 0;
       for (const chunk of chunks) {
         body?.set(chunk, offset);
@@ -99,7 +124,9 @@ export async function proxyMeetings(
           : undefined,
         cache: "no-store",
         redirect: "error",
-        signal: AbortSignal.timeout(action === "relevance" ? 35000 : 20000),
+        signal: AbortSignal.timeout(
+          action === "relevance" || action === "events" ? 35000 : 20000,
+        ),
       },
     );
     return response.status === 204
