@@ -94,8 +94,10 @@ if there is a provider error; the embedding probe alone does not verify generati
 3. Click that action. Expect the notice to clear and the four deterministic counts
    to remain the same. This stores a new interpretation using current context.
 4. Delete only your temporary requirement, using its normal manual-state action.
-   A later impact refresh should show stale context again because the baseline changed.
-   Analyze again if you want to leave the meeting current.
+   Refresh impact again. If this restores exactly the earlier baseline, its matching
+   cached analysis can be reused immediately without a stale notice or another AI
+   call. If other baseline values/versions changed meanwhile, expect a stale notice
+   and analyze the current baseline to refresh it.
 
 Ownership-dependent availability is covered by backend tests and the benchmark.
 “Raj is off Friday” is relevant only when selected context links Raj to an explicit
