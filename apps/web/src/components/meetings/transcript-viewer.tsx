@@ -36,6 +36,7 @@ import {
 } from "../ui/feedback";
 import { ErrorFeedback } from "../workspace/feedback";
 import { cn } from "../../lib/utils";
+import { MeetingImpact } from "./meeting-impact";
 
 export function MeetingDetailView({
   projectId,
@@ -62,11 +63,14 @@ export function MeetingDetailView({
       headingLevel={2}
     />
   ) : (
-    <TranscriptViewer
-      meeting={resource.data}
-      members={members}
-      changed={changed}
-    />
+    <>
+      <MeetingImpact meeting={resource.data} />
+      <TranscriptViewer
+        meeting={resource.data}
+        members={members}
+        changed={changed}
+      />
+    </>
   );
 }
 function TranscriptViewer({

@@ -130,8 +130,8 @@ AI interpretation and evidence-backed human review.
 Users will not need Node, Python or Docker to access a hosted version. A Windows
 executable is outside the current product plan.
 
-The current workspace is a local prototype with a fixed demo identity. AI processing
-and review actions remain future work.
+The current workspace is a local prototype with a fixed demo identity. Phase 4 adds
+AI relevance interpretation; event extraction and review actions remain future work.
 See the [Phase 1 report](../testing/phase-1-results.md) and
 [test commands](../../README.md#checks).
 
@@ -220,3 +220,38 @@ The additive `0005_meetings` migration preserves canonical state and existing
 documents. No new secret, domain allowlist, Gemini call, meeting-bot setup or database
 reset is required for file ingestion. This remains a browser application. Read the
 [transcript guide](../features/transcript-ingestion.md) for source formats/limits.
+
+## Updating to completed Phase 4
+
+Stop the frontend/backend, keep the existing root `.env` and database volume, then
+update `main` after the phase PR is merged. In Windows Command Prompt:
+
+```bat
+cd /d D:\okruti_projects\Hackathon_Projects\ProjectPulse
+git switch main
+git pull --ff-only origin main
+docker compose --project-name projectpulse up -d --wait
+cd apps\api
+uv sync --frozen
+uv run alembic upgrade head
+uv run alembic current
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+The migration head should be `0006_relevance`. In a second terminal:
+
+```bat
+cd /d D:\okruti_projects\Hackathon_Projects\ProjectPulse\apps\web
+npm ci
+npm run dev
+```
+
+Refresh `http://127.0.0.1:3000`, choose your project, open **Meetings** and a meeting
+with a transcript, then click **Analyze relevance** in **Meeting Impact**. Rule
+classifications are saved first. Ambiguous segments use the existing server-side
+`GEMINI_API_KEY`; optional `GEMINI_RELEVANCE_MODEL` defaults to `gemini-2.5-flash`.
+No new secret is required and a laptop does not need a Codex cloud allowlist.
+This additive migration preserves existing canonical state, documents and meetings.
+
+Follow the [complete Phase 4 manual scenarios](../testing/phase-4-manual-testing.md)
+to check known counts, source links, persistence, context changes and live Gemini.

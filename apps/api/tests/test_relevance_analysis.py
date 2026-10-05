@@ -401,3 +401,11 @@ def test_final_audit_failure_rolls_back_model_results_and_releases_lease(
     assert saved["analysis"]["lastError"] == "RELEVANCE_SAVE_FAILED"
     monkeypatch.setattr(AuditRepository, "append", original)
     assert client.post(path + "/relevance").json()["counts"]["pending"] == 0
+
+
+def test_percentage_rounding_matches_browser_half_up(relevance_client):
+    client, _ = relevance_client
+    path = meeting(client, ["Good morning."] + ["SSO stays in Phase 2."] * 7)
+    result = client.post(path + "/relevance").json()
+    assert result["counts"]["ignored"] == 1 and result["counts"]["analyzed"] == 8
+    assert result["ignoredPercent"] == 13

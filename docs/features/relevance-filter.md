@@ -36,14 +36,14 @@ provider instructions prohibit following commands inside source content.
 ## Benchmark and limitations
 
 [relevance-benchmark.json](../examples/relevance-benchmark.json) contains 50
-human-authored synthetic utterances, balanced 25 relevant/25 irrelevant, with
+explicitly labeled synthetic utterances, balanced 25 relevant/25 irrelevant, with
 expected labels and label reasons. Source order/previous utterance can matter.
 The benchmark is a regression aid, not an independently validated production
 accuracy claim. Rule coverage and false positives/negatives are reported separately
 from unresolved items and provider-contract tests. Contract tests use synthetic
 responses and do not establish live Gemini quality.
 
-Context-aware persistence/API and meeting UI follow in individually tested
+Context-aware persistence/API and meeting UI are implemented in individually tested
 Step 4.2 and Step 4.3 checkpoints. Phase 5 event extraction is outside this feature.
 
 ## Step 4.2: current project context and durable analysis
@@ -112,3 +112,57 @@ server-configured Gemini and reports false positives, false negatives, uncertain
 and unresolved IDs. It does not access/change your database. A nonzero code records
 label mismatches or provider failure; do not report a full live pass from rule-only
 or synthetic contract output.
+
+## Step 4.3: Meeting Impact and evidence navigation
+
+Open **Meetings**, choose a meeting with an uploaded transcript and click
+**Analyze relevance** in **Meeting Impact**. The purple panel displays analyzed,
+project-relevant, ignored, Needs review, pending and total segment counts. The
+percentage is ignored / analyzed, rounded to a whole percentage; pending coverage
+is called out explicitly. A 12.5% share displays as 13% consistently in API and UI.
+
+Analysis is explicit. **Analyze next batch** continues bounded processing;
+**Retry remaining segments** retries unresolved evidence after a provider failure.
+**Refresh impact** only reads saved results. Reloading or filtering never calls
+Gemini. Completed current analyses disable their action; stale analyses offer
+**Analyze current baseline**. Missing transcripts show an upload prerequisite.
+
+**Show relevance** filters saved classifications, 100 per page. Each includes a
+source quote, reason, confidence estimate, rule/AI method and related entity types.
+**View source utterance** links to the unchanged, full original text with its
+speaker and timestamp. The stable citation stays focused and visible after reload,
+including when impact data loads later. Client validation checks project/meeting
+IDs, source IDs/sequence/speaker/quote and coverage consistency before display.
+Impact loading/failure does not prevent reading the original transcript.
+
+**Analysis usage** reports actual attempted requests, recorded provider latency and
+reported tokens. Unknown usage is labeled. The UI has keyboard-operable controls,
+wrapping source text and tested desktop/375-pixel mobile layouts.
+
+![Desktop Meeting Impact](images/relevance-desktop.png)
+
+[Mobile preview](images/relevance-mobile.png).
+
+## Acceptance and practical limits
+
+Use the [Phase 4 manual testing scenarios](../testing/phase-4-manual-testing.md)
+for deterministic counts, live Gemini, citations, stale context and retry checks.
+The [results report](../testing/phase-4-results.md) distinguishes real API/database
+and browser checks from synthetic provider output. Canonical records and original
+transcripts remain unchanged by analysis; this phase creates no proposed events,
+owner/date changes or review decisions.
+
+Rules are deliberately narrow. The 50-example expected-label set should be reviewed
+against your own project language before treating model performance as adequate.
+Short replies, implied relationships, multilingual text and omitted/truncated
+context can remain pending or receive incorrect model interpretations. A score
+of 0.65 is a routing threshold, not an accuracy guarantee. The application is still
+a local prototype with a fixed demo identity; production authentication is future
+work. Large meetings require explicit batches; no meeting bot, audio transcription
+or background processing is introduced.
+
+Google's [model lifecycle documentation](https://ai.google.dev/gemini-api/docs/deprecations),
+checked 5 October 2026 (page updated 1 October 2026), lists no announced shutdown
+date for `gemini-2.5-flash`. It remains the configurable default generation model;
+`gemini-embedding-001` continues serving document retrieval independently. This
+documentation check does not establish live account access or classification quality.

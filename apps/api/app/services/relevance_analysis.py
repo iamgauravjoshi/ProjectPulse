@@ -146,7 +146,7 @@ def analysis_view(
         "pending": total - analyzed,
     }
     response["ignoredPercent"] = (
-        round(counts.get("IGNORED", 0) * 100 / analyzed) if analyzed else None
+        (counts.get("IGNORED", 0) * 200 + analyzed) // (2 * analyzed) if analyzed else None
     )
     response["stale"] = run.cache_key != key
     response["analysis"] = {

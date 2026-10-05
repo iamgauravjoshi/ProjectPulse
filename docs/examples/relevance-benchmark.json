@@ -1,5 +1,5 @@
 {
-  "description": "50 human-authored synthetic labels, balanced 25 relevant/25 irrelevant. This is a smoke benchmark, not production accuracy evidence. Raj context belongs to Step 4.2.",
+  "description": "50 explicitly labeled synthetic examples, balanced 25 relevant/25 irrelevant. This is a smoke benchmark, not production accuracy evidence. The selected context includes Raj's Friday deployment obligation.",
   "items": [
     {
       "id": "benchmark-01",

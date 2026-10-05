@@ -3,13 +3,19 @@
 Project intelligence and decision reconciliation. Meetings are evidence; the
 project state is the truth.
 
-Phases 0–3 are complete. Phase 2 adds audited manual editing, a document
+Phases 0–4 are implemented. Phase 2 adds audited manual editing, a document
 library, Gemini indexing and bounded context search in a purple theme. See the
 [project memory feature](docs/features/project-memory.md) and
 [Phase 2 results](docs/testing/phase-2-results.md).
 Phase 3 adds meetings, participants and deterministic TXT/JSON/VTT transcript
 ingestion with stable utterance citations. See [transcript ingestion](docs/features/transcript-ingestion.md)
 and [Phase 3 results](docs/testing/phase-3-results.md).
+Phase 4 adds a project relevance filter and Meeting Impact panel with saved
+classifications, coverage metrics and source links. See the
+[relevance feature](docs/features/relevance-filter.md),
+[manual testing scenarios](docs/testing/phase-4-manual-testing.md) and
+[Phase 4 results](docs/testing/phase-4-results.md). Live Gemini quality must be
+verified on your installation; automated provider tests use synthetic responses.
 
 The workspace reads the seeded PostgreSQL project
 through FastAPI and displays its trusted baseline, stakeholders, delivery
@@ -155,5 +161,5 @@ To refresh the documented desktop/mobile previews, run the browser suite with
 `CAPTURE_WORKSPACE=1`. Screenshots contain only the synthetic seeded demo.
 
 Do not commit `.env`, keys, generated build output or test artifacts. Keep backend
-configuration and credentials in server-side environment variables. Authentication,
-manual state editing, transcript ingestion and AI review actions remain future work.
+configuration and credentials in server-side environment variables. Production
+authentication, event extraction and AI review actions remain future work.

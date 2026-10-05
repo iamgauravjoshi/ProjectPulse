@@ -59,4 +59,56 @@ its dependent FK; ordering was corrected and full migration checks now pass. Ear
 failed checks are superseded by the complete green run. Tests used only the separate
 projectpulse_phase4_test database; development data/configuration was preserved.
 
-Next: Step 4.3 meeting impact UI, metrics, source links and browser acceptance.
+Step 4.2 checkpoint: `fdf7b8c`, pushed to the phase branch before UI implementation.
+
+## Step 4.3 — complete
+
+Added the purple Meeting Impact panel, same-origin Next.js proxy, strict client
+coverage/source validation, explicit analysis/retry/refresh, stale-context notices,
+outcome filters, 100-row pagination and stable source links. Pending and low-confidence
+segments remain separate from ignored results. Provider usage reports actual
+attempts and only provider-reported tokens. No new frontend dependency was needed.
+
+Browser verification found Python's ties-to-even rounding disagreed with JavaScript
+for a 12.5% ignored share. The API now uses exact integer half-up rounding; backend
+and real browser regressions both verify 13%. Source citation focus/viewport also
+remains stable after asynchronous Meeting Impact loading.
+
+## Final local acceptance
+
+| Check | Result |
+| --- | --- |
+| Full backend, real PostgreSQL integration and migration checks | **281 passed** |
+| Frontend unit tests | **48 passed** |
+| Full browser regression suite, real API/PostgreSQL | **61 passed**, including 10 Phase 4 cases |
+| Backend Ruff lint/format and strict mypy | Passed; 58 source files type checked |
+| Frontend lint, typecheck and formatting | Passed |
+| Standard production Next.js Turbopack build | Passed with approved runtime access |
+| Full npm dependency audit, including development dependencies | **0 vulnerabilities** |
+| Desktop and 375-pixel mobile screenshots | Captured and visually reviewed |
+| Contextual rule benchmark | 35/50 resolved, 15 unresolved; 0 false positives/negatives among resolved |
+| Live Gemini classification quality | **Not verified in this cloud runtime** |
+
+The ten Phase 4 browser cases cover persisted rule metrics and unchanged baseline,
+cached reload/citation focus, unavailable AI with pending coverage, stale context,
+205-segment pagination and source navigation, independent read retry, failed write
+retry, mobile/keyboard/long-text rendering, transcript prerequisite, percentage
+rounding and low-confidence routing. Provider/failure/low-confidence contract
+fixtures are explicitly synthetic; real API/database cases do not use a fake
+production provider. Tests create/delete their own QA meetings and temporary
+canonical record; the original seeded records and `.env` are preserved.
+
+The separate `projectpulse_phase4_test` database was used for destructive migration
+rollback/schema checks. Browser checks exercised a migrated, explicitly seeded
+development database and cleaned up their test records. No volume reset or secret
+change was needed. Existing Phases 0–3 regressions remain green.
+
+All three implementation steps are complete. The final checkpoint is pushed to
+`phase/4-project-relevance-filter`; the completed-phase PR must pass both GitHub
+Actions jobs (`foundation` and `windows-frontend-audit`) on its final head before
+merging to main. The phase branch is retained. Phase 5 is not started.
+
+For installation and live provider acceptance, follow the
+[Phase 4 laptop/manual testing guide](phase-4-manual-testing.md). Your root laptop
+key is reused; cloud contract tests and the 35 resolved rule examples are not
+evidence that the remaining 15 examples pass live Gemini.
