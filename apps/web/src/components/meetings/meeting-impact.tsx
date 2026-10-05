@@ -36,7 +36,13 @@ import { Field, FieldLabel } from "../ui/field";
 import { NativeSelect } from "../ui/input";
 import { ErrorFeedback } from "../workspace/feedback";
 
-export function MeetingImpact({ meeting }: { meeting: MeetingDetail }) {
+export function MeetingImpact({
+  meeting,
+  onAnalyzed,
+}: {
+  meeting: MeetingDetail;
+  onAnalyzed?: () => void;
+}) {
   return (
     <Card aria-label="Meeting impact">
       <CardHeader>
@@ -49,7 +55,11 @@ export function MeetingImpact({ meeting }: { meeting: MeetingDetail }) {
         </div>
       </CardHeader>
       {meeting.hasTranscript ? (
-        <ImpactContent key={meeting.id} meeting={meeting} />
+        <ImpactContent
+          key={meeting.id}
+          meeting={meeting}
+          onAnalyzed={onAnalyzed}
+        />
       ) : (
         <CardContent>
           <Empty compact>
@@ -63,7 +73,13 @@ export function MeetingImpact({ meeting }: { meeting: MeetingDetail }) {
     </Card>
   );
 }
-function ImpactContent({ meeting }: { meeting: MeetingDetail }) {
+function ImpactContent({
+  meeting,
+  onAnalyzed,
+}: {
+  meeting: MeetingDetail;
+  onAnalyzed?: () => void;
+}) {
   const [page, setPage] = useState(1);
   const [outcome, setOutcome] = useState<RelevanceOutcome>("ALL");
   const load = useCallback(
@@ -96,6 +112,7 @@ function ImpactContent({ meeting }: { meeting: MeetingDetail }) {
     setMessage("");
     try {
       const result = await analyzeRelevance(meeting);
+      onAnalyzed?.();
       if (!result.analysis?.lastError)
         setMessage(
           `${result.counts.analyzed} of ${result.counts.total} segments analyzed. ${result.counts.pending} remain.`,

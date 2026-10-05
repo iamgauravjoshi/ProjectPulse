@@ -8,6 +8,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 
 from app.api.dependencies import get_database_session
+from app.config import get_settings
 from app.db.models import (
     AuditEvent,
     EventCandidateEvidence,
@@ -19,13 +20,14 @@ from app.db.models import (
     Requirement,
     UtteranceRelevance,
 )
+from app.domain.demo_identity import demo_id
 from app.domain.events import ExtractedEvent, ExtractionBatch, SegmentEvents
 from app.domain.manual_state import StateError
 from app.domain.relevance import ClassificationBatch, SegmentClassification
 from app.main import app
 from app.repositories.audit import AuditRepository
 from app.services.demo_seed import DEMO_PROJECT_ID, seed_demo
-from app.services.event_provider import EventProviderResult, get_event_provider
+from app.services.event_provider import EventProviderResult, GeminiEvents, get_event_provider
 from app.services.project_access import LOCAL_DEMO_ACTOR_ID
 from app.services.relevance_provider import ProviderResult, get_relevance_provider
 
@@ -462,3 +464,79 @@ def test_provider_model_change_marks_prior_run_stale(event_client):
     assert client.get(path + "/events").json()["stale"]
     latest = client.post(path + "/events").json()
     assert not latest["stale"] and latest["extraction"]["id"] != initial["extraction"]["id"]
+
+
+def test_production_provider_without_key_never_fabricates_candidates(event_client, monkeypatch):
+    client, _, _ = event_client
+    path = meeting(client, ["SSO remains Phase 2."])
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+    get_settings.cache_clear()
+    try:
+        app.dependency_overrides.pop(get_event_provider)
+        assert not GeminiEvents().available
+        result = client.post(path + "/events").json()
+        assert result["extraction"]["lastError"] == "EVENT_PROVIDER_UNAVAILABLE"
+        assert result["counts"]["pending"] == 1 and result["items"] == []
+        assert result["extraction"]["apiCalls"] == 0
+    finally:
+        get_settings.cache_clear()
+
+
+def test_linked_speaker_is_distinct_from_owner_and_neighbor_quote_persists(event_client):
+    client, provider, _ = event_client
+    created = client.post(ROOT, json={"title": "Linked provenance"}).json()
+    path = f"{ROOT}/{created['id']}"
+    assert (
+        client.post(
+            path + "/participants",
+            json={
+                "displayName": "Sarah",
+                "speakerKey": "id:sarah-source",
+                "userId": str(demo_id("sarah")),
+            },
+        ).status_code
+        == 201
+    )
+    assert (
+        client.post(
+            path + "/transcript",
+            params={"filename": "provenance.json"},
+            content=json.dumps(
+                [
+                    {
+                        "speaker": "Sarah",
+                        "speakerId": "sarah-source",
+                        "text": "John will review SSO tomorrow.",
+                    },
+                    {
+                        "speaker": "Sarah",
+                        "speakerId": "sarah-source",
+                        "text": "SSO review is a commitment.",
+                    },
+                ]
+            ).encode(),
+        ).status_code
+        == 201
+    )
+    assert client.post(path + "/relevance").status_code == 200
+    original = provider.extract
+
+    def attributed(windows, context):
+        result = original(windows, context)
+        last = result.batch.items[-1].events[0]
+        last.owner_mention = "John"
+        last.due_date_text = "tomorrow"
+        last.evidence.append(
+            last.evidence[0].model_copy(
+                update={"utterance_id": windows[-1].previous.id, "quote": windows[-1].previous.text}
+            )
+        )
+        return result
+
+    provider.extract = attributed
+    result = client.post(path + "/events").json()
+    event = result["items"][-1]
+    assert event["saidByUserId"] == str(demo_id("sarah"))
+    assert event["ownerMention"] == "John" and event["dueDateText"] == "tomorrow"
+    assert [e["sequence"] for e in event["evidence"]] == [0, 1]
+    assert client.get(path + "/events").json()["items"] == result["items"]

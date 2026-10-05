@@ -56,3 +56,63 @@ source deletion, superseded leases and audit failures cannot partially save cand
 The suite completed without failures. Development database and existing volumes
 have not been reset or migrated by these tests. Provider cases use injection; live
 Gemini semantic quality remains unverified. Next: Step 5.3 UI and phase acceptance.
+
+Step 5.2 published as `bdfad0d`; both CI jobs passed (run `37357087101`).
+
+## Step 5.3 — complete, 6 October 2026
+
+Added the shared-design-system Project Event Candidates panel, server proxy and
+validated browser contracts. Extraction requires current relevance, handles one
+batch per explicit action, and exposes pending/processed/no-event coverage without
+claiming full-meeting completion. Saved candidates show kind, statement, confidence,
+review notice, independent speaker provenance, literal owner/date wording and exact
+primary/neighbor citations. Filters, pagination, stale context, usage, empty/error
+states and keyboard/mobile flows are implemented. No confirmation/application flow
+or canonical write is introduced.
+
+Added `app.check_events`: default validates 16 labeled contracts without an AI call;
+`--live` performs one explicitly requested synthetic smoke evaluation, reports field
+mismatches/usage and preserves project data. The live quality procedure is documented;
+no successful live model evaluation is claimed by this report.
+
+Final local acceptance:
+
+- Full API regression suite against disposable PostgreSQL: **333 passed in 41.96s**,
+  including **26 event integration cases** and **26 event contract cases**.
+- Ruff check and format check passed (**93 files**); mypy passed (**64 source files**).
+- Development database `alembic check`: no pending schema differences after additive
+  migration `0007_events`. Full test-database downgrade/reapply and schema checks pass.
+- Frontend ESLint, typecheck, Prettier and production Next.js build: passed.
+- Frontend unit suite: **61 passed**, including **12 event boundary cases**.
+- Feature-wide production-browser regression: **70 passed in 2.9 minutes**, including
+  **9 new event scenarios**. Browser scenarios inject only the test event provider;
+  normal relevance/document missing-key behavior is still exercised.
+- Screenshot capture scenario: passed; desktop and 375px mobile panels visually
+  reviewed. Images are in `docs/features/images/events-{desktop,mobile}.png`.
+- `npm audit --audit-level=high`: **0 vulnerabilities**.
+- Default fixture-check command: **16 examples valid**, no model called. Missing-key
+  live-mode check reports `EVENT_PROVIDER_UNAVAILABLE`, zero evaluated; expected
+  nonzero exit. Production missing-key API behavior is independently tested.
+- Original **31 pre-existing records** retain their table fingerprints before and
+  after the additive development migration and browser scenarios. Existing seed
+  identities, canonical values, `.env` and database volumes are preserved.
+
+An initial browser outage assertion matched duplicated relevance/transcript text;
+the selector now targets source evidence and passes in the full suite. One concurrent
+unit run timed out in the existing deep-brace glob regression; the independent full
+unit rerun passed. No timeout increase or unrelated implementation change was made.
+
+Regression review confirms saved IDs/cache, partial batches, zero-event completion,
+literal provenance, active/expired/superseded leases, context changes, source deletion,
+cross-project/meeting isolation and audit/save rollback. Live semantic accuracy remains
+unverified; summaries require human judgment. Current local demo identity is unchanged.
+
+## Completion delivery
+
+Implementation, acceptance and documentation are complete for all three phase steps.
+The final tested checkpoint is delivered through
+[PR #7](https://github.com/iamgauravjoshi/ProjectPulse/pull/7). Publication verifies its
+Git tree matches the committed local tree. Merge requires successful `foundation`
+and `windows-frontend-audit` jobs on the final PR head. Main receives only the completed
+phase; `phase/5-project-event-extraction` is retained for history. Stop after that merge.
+Phase 6 is not authorized.

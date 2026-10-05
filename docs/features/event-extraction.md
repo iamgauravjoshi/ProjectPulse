@@ -81,3 +81,29 @@ Below 0.65 confidence, candidates need review but remain candidates at every sco
 Old runs remain readable with a stale warning after context/model changes. The API
 requires current relevance before starting another extraction. Token totals count
 only reported usage; attempts and recorded latency do not imply cost estimates.
+
+## Meeting UI and acceptance
+
+Project Event Candidates sits between Meeting Impact and transcript evidence. It
+refreshes after explicit relevance analysis and exposes extraction/retry, saved-run
+coverage, stale/partial context, kind filters, 100-candidate pages, exact quotes,
+source links and recorded usage. Every record is labeled Candidate independently
+of confidence and proposal/statement/question/negation. Owner/date values are literal
+mentions, not resolved assignments. Source links retain transcript pagination and focus.
+
+The same-origin Next.js proxy validates UUID scope, page/kind and empty POST bodies.
+The browser validates counts, candidate scope, source identity, quote substrings,
+primary/neighbor provenance, literal owner/date mentions and Unicode quote bounds.
+Read and write failures retain the underlying transcript with explicit recovery.
+
+The browser suite uses `tests/e2e_app.py`, which injects a synthetic event provider
+only in its test entry point while exercising real API persistence. Production
+`app.main:app` uses Gemini and has no synthetic fallback. See
+[manual acceptance](../testing/phase-5-manual-testing.md) for live checks and
+[completion evidence](../testing/phase-5-results.md) for automated checks.
+
+The screenshots below use synthetic browser acceptance candidates:
+
+![Desktop event candidate panel](images/events-desktop.png)
+
+![Mobile event candidate panel](images/events-mobile.png)

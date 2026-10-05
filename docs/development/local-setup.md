@@ -161,7 +161,11 @@ Users will not need Node, Python or Docker to access a hosted version. A Windows
 executable is outside the current product plan.
 
 The current workspace is a local prototype with a fixed demo identity. Phase 4 adds
-AI relevance interpretation; event extraction and review actions remain future work.
+AI relevance interpretation; Phase 5 adds cited event candidates. Review/application
+actions remain future work. Event extraction reuses server-only `GEMINI_API_KEY`;
+optional `GEMINI_EVENT_MODEL` defaults to `gemini-3.5-flash-lite`. Apply migration
+`0007_events` with `uv run alembic upgrade head`, preserving the existing database.
+See [Phase 5 manual acceptance](../testing/phase-5-manual-testing.md).
 See the [Phase 1 report](../testing/phase-1-results.md) and
 [test commands](../../README.md#checks).
 
