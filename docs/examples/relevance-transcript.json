@@ -1,0 +1,8 @@
+{
+  "utterances": [
+    { "speaker": "Sarah", "speakerId": "sarah-1", "timestamp": "00:00:10", "text": "I went hiking this weekend." },
+    { "speaker": "John", "speakerId": "john-1", "timestamp": "00:00:20", "text": "Good morning." },
+    { "speaker": "Sarah", "speakerId": "sarah-1", "timestamp": "00:00:30", "text": "Move the launch to November 10." },
+    { "speaker": "John", "speakerId": "john-1", "timestamp": "00:00:40", "text": "SSO stays in Phase 2." }
+  ]
+}

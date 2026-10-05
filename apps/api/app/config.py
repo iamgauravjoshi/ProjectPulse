@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=REPOSITORY_ROOT / ".env", extra="ignore")
     database_url: str | None = None
     gemini_api_key: SecretStr | None = None
+    gemini_relevance_model: str = "gemini-2.5-flash"
 
 
 @lru_cache

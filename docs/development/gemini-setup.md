@@ -120,6 +120,29 @@ remain necessary. There is no arbitrary slicing, padding or fake-vector fallback
 References: [Gemini REST API](https://ai.google.dev/api/embeddings) and
 [official Python SDK](https://github.com/googleapis/python-genai).
 
+## Phase 4 relevance classification
+
+The same server-only `GEMINI_API_KEY` also authorizes generation calls for project
+relevance. Document embeddings still use `gemini-embedding-001`. Relevance uses
+`gemini-2.5-flash` by default; override it locally with `GEMINI_RELEVANCE_MODEL`
+only when you intend to use another model available to your account. Restart the
+backend after changing configuration. The fixed REST destination remains
+`generativelanguage.googleapis.com`; your laptop requires no Codex cloud settings.
+
+From `apps/api`, explicitly verify the labeled relevance smoke benchmark:
+
+```sh
+uv run python -m app.check_relevance
+uv run python -m app.check_relevance --live
+```
+
+The first command makes no network requests. The second sends the 15 examples
+unresolved by rules with synthetic project context to Gemini. Both preserve your
+database and never print the key. Inspect `providerError`, `falsePositives`,
+`falseNegatives`, `uncertain` and `unresolved`; a successful rule-only run is not a
+live classification pass. For actual meeting acceptance, use the
+[Phase 4 manual guide](../testing/phase-4-manual-testing.md).
+
 ## If you later run the backend in Codex cloud
 
 The cloud executor is a separate machine and does not receive your laptop's `.env`.
