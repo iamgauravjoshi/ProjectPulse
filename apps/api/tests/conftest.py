@@ -13,6 +13,14 @@ from app.db.models import Project, ProjectMember, User
 from app.db.session import create_database_engine, get_engine
 
 
+def pytest_make_parametrize_id(config, val, argname):
+    # Binary fixtures otherwise produce multi-megabyte IDs. Windows rejects
+    # PYTEST_CURRENT_TEST values longer than 32767 characters before tests run.
+    if isinstance(val, bytes):
+        return f"{argname}-{len(val)}-bytes"
+    return None
+
+
 @pytest.fixture(scope="session")
 def database_url():
     value = os.environ.get("TEST_DATABASE_URL")

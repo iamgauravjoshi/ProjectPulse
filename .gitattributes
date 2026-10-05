@@ -1,0 +1,3 @@
+# PDF offsets and archive bytes must survive Windows checkouts unchanged.
+*.pdf binary
+*.docx binary

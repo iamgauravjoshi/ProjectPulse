@@ -17,12 +17,9 @@ pytestmark = pytest.mark.integration
 
 def test_pgvector_migration_rollback_reapply(database_engine, migration_config):
     with database_engine.connect() as connection:
-        assert (
-            connection.execute(
-                text("SELECT extversion FROM pg_extension WHERE extname='vector'")
-            ).scalar_one()
-            == "0.8.1"
-        )
+        assert connection.execute(
+            text("SELECT extversion FROM pg_extension WHERE extname='vector'")
+        ).scalar_one() in {"0.8.1", "0.8.7"}
     command.downgrade(migration_config, "base")
     with database_engine.connect() as connection:
         assert not connection.execute(

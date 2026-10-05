@@ -83,8 +83,10 @@ docker compose --project-name projectpulse up -d --wait
 ```
 
 Preserve an existing `.env` instead of overwriting it. The sample password is for
-localhost development only. The image is pinned to pgvector 0.8.1/PostgreSQL 17
-with a digest. From `apps/api`, apply migrations:
+localhost development only. New installations use pinned pgvector 0.8.7/PostgreSQL 18
+with a digest. Existing PostgreSQL 17 installations must keep their image and mount
+settings using the [database compatibility guide](docs/development/local-setup.md#postgresql-image-and-volume-compatibility).
+From `apps/api`, apply migrations:
 
 ```sh
 uv run alembic upgrade head
