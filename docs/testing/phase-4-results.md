@@ -74,12 +74,20 @@ for a 12.5% ignored share. The API now uses exact integer half-up rounding; back
 and real browser regressions both verify 13%. Source citation focus/viewport also
 remains stable after asynchronous Meeting Impact loading.
 
+Final review also caught JavaScript UTF-16 slicing disagreeing with Python source
+quote bounds for emoji. Client text validation and citation comparison now count
+Unicode code points; unit and real mobile browser coverage exercise long emoji text.
+
+One parallel unit/static-check run timed out in the existing deeply nested glob
+compatibility test under CPU contention. Repeating the unit suite independently
+passed all 49 cases; no timeout or assertion was weakened.
+
 ## Final local acceptance
 
 | Check | Result |
 | --- | --- |
 | Full backend, real PostgreSQL integration and migration checks | **281 passed** |
-| Frontend unit tests | **48 passed** |
+| Frontend unit tests | **49 passed** |
 | Full browser regression suite, real API/PostgreSQL | **61 passed**, including 10 Phase 4 cases |
 | Backend Ruff lint/format and strict mypy | Passed; 58 source files type checked |
 | Frontend lint, typecheck and formatting | Passed |

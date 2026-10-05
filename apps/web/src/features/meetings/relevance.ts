@@ -19,6 +19,14 @@ const entityTypes = [
   "open_question",
 ] as const;
 const count = z.number().int().min(0).max(10000);
+// Python source bounds count Unicode code points, while JS string.length counts
+// UTF-16 units. Keep emoji-containing quotes compatible with the API boundary.
+const boundedText = (max: number) =>
+  z
+    .string()
+    .min(1)
+    .max(max * 2)
+    .refine((text) => Array.from(text).length <= max);
 export const relevanceSchema = z
   .object({
     projectId: z.uuid(),
@@ -57,12 +65,12 @@ export const relevanceSchema = z
         z.object({
           utteranceId: z.uuid(),
           sequence: z.number().int().min(0).max(9999),
-          speaker: z.string().min(1).max(120),
-          text: z.string().min(1).max(400),
+          speaker: boundedText(120),
+          text: boundedText(400),
           outcome: z.enum(["RELEVANT", "IGNORED", "UNCERTAIN"]),
           relevant: z.boolean(),
           confidence: z.number().min(0).max(1),
-          reason: z.string().min(1).max(500),
+          reason: boundedText(500),
           relatedEntityTypes: z.array(z.enum(entityTypes)).max(7),
           method: z.enum(["RULE", "CONTEXT_RULE", "GEMINI"]),
         }),
@@ -113,7 +121,7 @@ export function verifyRelevance(data: unknown, meeting: MeetingDetail) {
         !source ||
         source.sequence !== x.sequence ||
         source.speaker !== x.speaker ||
-        source.text.slice(0, 400) !== x.text
+        Array.from(source.text).slice(0, 400).join("") !== x.text
       );
     })
   )

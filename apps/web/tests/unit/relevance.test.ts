@@ -83,6 +83,33 @@ afterEach(() => vi.unstubAllGlobals());
 describe("relevance evidence and coverage", () => {
   it("validates exact counts and citation attribution", () =>
     expect(verifyRelevance(snapshot, meeting).counts.relevant).toBe(1));
+  it("matches Python code-point bounds for emoji source quotes and reasons", () => {
+    const text = "SSO " + "🚀".repeat(450);
+    const quote = Array.from(text).slice(0, 400).join("");
+    const emojiMeeting = { ...meeting, utterances: [{ ...source, text }] };
+    const emojiSnapshot = {
+      ...snapshot,
+      items: [{ ...snapshot.items[0], text: quote, reason: "🚀".repeat(500) }],
+    };
+    expect(verifyRelevance(emojiSnapshot, emojiMeeting).items[0].text).toBe(
+      quote,
+    );
+    expect(
+      relevanceSchema.safeParse({
+        ...emojiSnapshot,
+        items: [{ ...emojiSnapshot.items[0], text: quote + "🚀" }],
+      }).success,
+    ).toBe(false);
+    expect(() =>
+      verifyRelevance(
+        {
+          ...emojiSnapshot,
+          items: [{ ...emojiSnapshot.items[0], text: text.slice(0, 400) }],
+        },
+        emojiMeeting,
+      ),
+    ).toThrow();
+  });
   it("rejects fabricated coverage and source content", () => {
     for (const change of [
       { counts: { ...snapshot.counts, pending: 1 } },

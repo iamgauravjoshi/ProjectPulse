@@ -366,7 +366,7 @@ test("mobile keyboard analysis and long source text fit the viewport", async ({
   request,
 }) => {
   const meeting = await create(request, [
-    "SSO " + "long source ".repeat(100),
+    "SSO " + "long source 🚀 ".repeat(100),
     "Good morning.",
   ]);
   try {

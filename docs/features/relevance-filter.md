@@ -133,6 +133,7 @@ source quote, reason, confidence estimate, rule/AI method and related entity typ
 speaker and timestamp. The stable citation stays focused and visible after reload,
 including when impact data loads later. Client validation checks project/meeting
 IDs, source IDs/sequence/speaker/quote and coverage consistency before display.
+Quote bounds count Unicode code points consistently with the server, including emoji.
 Impact loading/failure does not prevent reading the original transcript.
 
 **Analysis usage** reports actual attempted requests, recorded provider latency and
