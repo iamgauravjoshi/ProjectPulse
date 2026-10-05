@@ -45,3 +45,70 @@ responses and do not establish live Gemini quality.
 
 Context-aware persistence/API and meeting UI follow in individually tested
 Step 4.2 and Step 4.3 checkpoints. Phase 5 event extraction is outside this feature.
+
+## Step 4.2: current project context and durable analysis
+
+The classifier receives selected ACTIVE requirements, CONFIRMED decisions, open
+commitments/risks/questions, active milestones and dependencies from the current
+accessible project. Owners come from explicit project membership. Context is bounded
+to 60 facts / 12,000 serialized fact characters and 100 member names; truncation is
+reported. Closed obligations and provisional decisions are not treated as baseline.
+
+Availability such as “Raj is off Friday” is relevant when selected context includes
+Raj's explicitly owned Friday deployment. Without an active owned obligation and
+with complete context, it is ignored. Unknown dates, ambiguous names or incomplete
+context stay unresolved. No owner, date or criticality field is invented. Mixed
+project/personal statements are retained; standalone hobby/film/other-client examples
+are filtered conservatively.
+
+`0006_relevance` adds relevance_analyses and utterance_relevance, plus a scoped
+utterance uniqueness constraint. Composite foreign keys protect project/meeting
+attribution; indexed queries support scoped retrieval, filtering and pagination.
+Deleting a meeting cascades interpretations while preserving audit events. There
+is no canonical-table write in relevance processing.
+
+GET/POST `/api/v1/projects/{project}/meetings/{meeting}/relevance` reads/runs analysis.
+GET supports page 1–100 and outcome ALL/RELEVANT/IGNORED/UNCERTAIN, 100 rows/page.
+POST first applies rules to every source utterance, then processes at most 40
+unresolved segments / 20,000 segment-and-neighbor characters in ONE provider call.
+Another explicit POST continues the next batch. There is no sampling or background
+loop. Long transcripts show remaining coverage, not an invented full-meeting result.
+
+Confidence below 0.65 is UNCERTAIN; these classifications count as analyzed but
+never ignored/relevant. An unavailable/failed/invalid provider batch remains pending;
+no fake result is saved. Metrics use exact stored segments. The ignored percentage
+uses the analyzed denominator, with unprocessed/uncertain counts shown separately.
+This is a segment share, not a duration or mathematically calibrated intelligence.
+
+Canonical values/versions, membership, source hash, model and classifier version
+form the cache identity. Unchanged completed analyses reuse results without another
+provider call or success audit. A baseline edit marks previous interpretations stale;
+explicit analysis creates a fresh snapshot. Context changes during an AI call cause
+its output to be discarded. Historical runs are retained until meeting deletion.
+
+Network requests hold no DB locks. A 45-second server lease rejects concurrent
+analysis with 409 and permits explicit recovery after expiry. Source deletion or a
+newer attempt cannot resurrect results. Rule checkpoints and model batches have
+separate atomic audits; a final persistence/audit failure rolls back model results
+and releases the lease, preserving the audited rule checkpoint.
+
+Provider attempt count, cumulative latency and provider-reported input/output tokens
+are stored. Missing usage is not guessed: usageReportedCalls states how many calls
+reported both counts. A failed attempt can consume provider quota; retry is explicit.
+
+### Reproduce the benchmark
+
+From apps/api:
+
+```sh
+uv run python -m app.check_relevance
+uv run python -m app.check_relevance --live
+```
+
+The default uses a synthetic selected-project fixture with Raj's Friday obligation,
+resolving 35/50 labels with zero false positives/negatives among resolved examples;
+15 remain unresolved. `--live` explicitly sends unresolved examples to your
+server-configured Gemini and reports false positives, false negatives, uncertain
+and unresolved IDs. It does not access/change your database. A nonzero code records
+label mismatches or provider failure; do not report a full live pass from rule-only
+or synthetic contract output.

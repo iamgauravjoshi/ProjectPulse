@@ -68,6 +68,7 @@ class ProjectContext(BaseModel):
     project: str = ""
     facts: list[ContextFact] = Field(default_factory=list)
     complete: bool = True
+    members: list[str] = Field(default_factory=list)
 
 
 def validate_batch(value: object, segments: list[Segment]) -> ClassificationBatch:

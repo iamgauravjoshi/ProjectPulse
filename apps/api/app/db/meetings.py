@@ -73,6 +73,7 @@ class Utterance(ProjectOwned, Base):
     __tablename__ = "utterances"
     __table_args__ = (
         UniqueConstraint("project_id", "meeting_id", "sequence"),
+        UniqueConstraint("project_id", "meeting_id", "id"),
         ForeignKeyConstraint(
             ["project_id", "meeting_id"], ["meetings.project_id", "meetings.id"], ondelete="CASCADE"
         ),
