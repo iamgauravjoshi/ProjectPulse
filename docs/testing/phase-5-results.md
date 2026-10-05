@@ -33,5 +33,26 @@ Checkpoint publication uses the authenticated GitHub connector because local Git
 push credentials were unavailable in the preceding maintenance checkpoint. Its
 published Git tree must equal the tested local tree. Main remains unchanged.
 
-Next: Step 5.2 scoped runs/candidates/evidence, explicit processing API and real
-PostgreSQL migration/integration checks.
+Step 5.1 published as `725dc8c`; both CI jobs passed (run `37355202369`).
+
+## Step 5.2 — complete
+
+Migration `0007_events` adds extraction runs, completed segments (including zero
+events), candidate records and exact evidence links. Composite foreign keys enforce
+project/meeting isolation; candidates have only CANDIDATE status. GET/POST meeting
+events use server context and current RELEVANT source classifications. Each action
+processes at most one bounded batch. Saved IDs are stable, completed segments are
+cached, stale context is labeled, and active leases prevent duplicate processing.
+Database locks are released before provider calls. Changed context, malformed output,
+source deletion, superseded leases and audit failures cannot partially save candidates.
+
+- Complete real-PostgreSQL API suite: **331 passed in 113.40 seconds**, including
+  **24 new integration cases** plus the Step 5.1 contract tests.
+- Full migration downgrade/reapply and migrated-schema/model comparison passed.
+- Ruff check and format check passed (**91 files**); mypy passed (**63 source files**).
+- Regression review: existing API suites pass; integration assertions verify
+  canonical categories are unchanged and cross-project access is rejected.
+
+The suite completed without failures. Development database and existing volumes
+have not been reset or migrated by these tests. Provider cases use injection; live
+Gemini semantic quality remains unverified. Next: Step 5.3 UI and phase acceptance.

@@ -58,3 +58,26 @@ is independently validated; schema success alone does not prove semantic accurac
 Event extraction never calls canonical write services. Delta comparison, conflict
 detection, governance, approving/rejecting/applying candidates, task synchronization
 and live conferencing integration belong to later phases.
+
+## Persistence and API
+
+Migration `0007_events` follows `0006_relevance`. `event_extractions` records context,
+model/version, usage and a 45-second processing lease. `extracted_segments` marks
+completed primary sources even when no event is returned. `project_event_candidates`
+and `event_candidate_evidence` preserve interpretations and exact quotes independently
+of canonical tables. Scoped foreign keys cascade with source meeting deletion.
+
+GET `/api/v1/projects/{projectId}/meetings/{meetingId}/events` returns prerequisites,
+current relevance identity, stale state, segment coverage, candidates and usage.
+`page` is 1–400, page size is 100, and `kind` is ALL or one of the seven kinds.
+POST at the same path accepts no body and processes one batch. No source transcript,
+project context, owner ID, confirmation or model override is accepted from the client.
+Unavailable AI records an honest error with remaining work pending. Explicit retry
+keeps saved results and processes unfinished sources. Uncertain/ignored relevance
+is excluded; additional current relevance results can extend the eligible set.
+
+Counts distinguish source segments from event candidates (up to four per segment).
+Below 0.65 confidence, candidates need review but remain candidates at every score.
+Old runs remain readable with a stale warning after context/model changes. The API
+requires current relevance before starting another extraction. Token totals count
+only reported usage; attempts and recorded latency do not imply cost estimates.
