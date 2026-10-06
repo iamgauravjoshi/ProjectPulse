@@ -22,3 +22,30 @@ Normal-process regression execution was needed because sandboxed TestClient test
 stalled; the same suite completed in 1.20 seconds with normal permissions. Live
 Gemini requests were not made; transport tests use injected synthetic responses.
 Phase 4/5 live quality remains unverified. Next step: scoped persistence/API.
+
+Published Step 6.1 as `9acf40c` through the authenticated GitHub connector because
+local Git push credentials are unavailable. Published tree matches the tested tree.
+
+## Step 6.2: scoped persistence and API — complete
+
+Migration `0008_deltas` adds comparison runs and deltas with scoped composite foreign
+keys and CANDIDATE-only status. API derives current extraction and versioned canonical
+context server-side. Previous values are server-owned; dates/names remain proposed
+wording. Saved unchanged/unclear results, empty extraction completion, bounded batches,
+stable IDs, cache, stale baselines, active/expired/superseded leases, input changes,
+source deletion, project isolation and transactional audit are covered.
+
+Full disposable-PostgreSQL regression: **383 passed in 35.01 seconds**, including
+17 new integration cases and the 33 Step 6.1 tests. Final hardening adds identical-value
+and partial-owner rejection; the final focused contract/integration suite has **51
+passing cases**. Ruff lint/format pass (102 files); strict mypy passes (70 source files).
+Full migration downgrade/reapply and schema/model comparison passed. Auto-generated
+migration ordering was reviewed and corrected so the candidate unique constraint
+precedes its referencing foreign key and is removed after dependent tables.
+
+Two expected test-fixture warnings occur when deliberately injected save failures
+roll back the outer test transaction; they do not represent test failures or partial
+production writes. Regression review confirms no canonical mutation service is called.
+Tests use a separately named `_phase6_test` database; development schema/records,
+existing seed identities, `.env` and volumes remain untouched. No live AI calls.
+Next step: meeting UI and complete phase acceptance.

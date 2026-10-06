@@ -188,6 +188,22 @@ def test_phase_requires_explicit_phase_context():
         validate_comparisons(output(source, context), [source], context)
 
 
+def test_identical_value_is_not_a_change_and_partial_owner_is_rejected():
+    source, context = inputs()
+    context.records[0].values["phase"] = 1
+    with pytest.raises(StateError):
+        validate_comparisons(output(source, context), [source], context)
+    source = source.model_copy(update={"kind": "COMMITMENT"})
+    source.evidence[0].quote = "John will provide credentials."
+    context.records[0] = context.records[0].model_copy(update={"kind": "COMMITMENT"})
+    with pytest.raises(StateError):
+        validate_comparisons(
+            output(source, context, changes=[{"field": "ownerMention", "proposedText": "J"}]),
+            [source],
+            context,
+        )
+
+
 def configure(monkeypatch, **settings):
     monkeypatch.setenv("GEMINI_API_KEY", "synthetic-test-key")
     for name, value in settings.items():

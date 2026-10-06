@@ -122,6 +122,13 @@ def validate_comparisons(
             for change in result.changes:
                 if not any(change.proposed_text in quote for quote in quotes):
                     raise ValueError("Proposed wording must occur verbatim in cited evidence")
+                if change.field in {"ownerMention", "dueDateText", "date"} and not any(
+                    re.search(r"(?<!\w)" + re.escape(change.proposed_text) + r"(?!\w)", q)
+                    for q in quotes
+                ):
+                    raise ValueError("Names and dates require complete literal word boundaries")
+                if target and str(target.values.get(change.field)) == change.proposed_text:
+                    raise ValueError("An identical field value is not a possible change")
                 if change.field == "phase" and not any(
                     re.search(r"\bphase\s+" + re.escape(change.proposed_text) + r"\b", q, re.I)
                     for q in quotes

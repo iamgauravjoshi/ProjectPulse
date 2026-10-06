@@ -3,6 +3,7 @@
 from app.db.audit import AuditEvent
 from app.db.chunks import DocumentChunk
 from app.db.decisions import Decision
+from app.db.deltas import DeltaComparisonRun, ProjectDelta
 from app.db.documents import Document
 from app.db.events import (
     EventCandidateEvidence,
@@ -17,6 +18,8 @@ from app.db.state import Milestone, Requirement, Risk
 from app.db.work import Commitment, Dependency, OpenQuestion
 
 __all__ = [
+    "DeltaComparisonRun",
+    "ProjectDelta",
     "EventCandidateEvidence",
     "EventExtraction",
     "ExtractedSegment",
