@@ -375,7 +375,7 @@ export function ProjectComparisons({
         <p className="text-xs text-muted">
           Page {page} of {pages} · {data.filteredCount} comparisons
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             size="sm"

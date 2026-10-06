@@ -53,7 +53,8 @@ The browser test entry point supplies synthetic responses and does not verify Ge
 - Add a disposable manual requirement, then refresh comparisons. Historical results
   show stale and comparison requires current relevance/extraction. A baseline/evidence
   change during a request discards the entire batch. Remove only the QA requirement.
-- At 375px, use Tab/Enter for controls and source links; long/Unicode wording wraps.
+- At 320px and 375px, use Tab/Enter for controls and source links; long/Unicode wording
+  and comparison pagination controls wrap within the panel.
 - Record date, commit, models, meeting/candidate/source IDs, observed counts, target
   versions, mismatches and provider errors. A small successful walkthrough verifies
   integration, not general semantic accuracy; broader independently labeled evaluation

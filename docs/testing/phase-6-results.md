@@ -71,7 +71,7 @@ Final verification, 6 October 2026 (Asia/Calcutta):
 - Frontend unit regression: **73 passed**, including 12 new comparison cases.
 - Frontend lint/typecheck/format and final production build: passed.
 - Dependency audit: **zero vulnerabilities**.
-- Full production-browser regression: **78 passed in 1.8 minutes**, including eight
+- Full production-browser regression after CI layout correction: **79 passed in 2.5 minutes**, including nine
   comparison scenarios. Browser comparisons/extraction use test-only synthetic providers
   with real FastAPI/PostgreSQL; they do not prove live Gemini semantic accuracy.
 - Final desktop/mobile wording screenshot scenario: **passed** after rebuild; screenshots
@@ -101,6 +101,16 @@ partial batches, stable cache/IDs, leases, input/baseline changes, audit rollbac
 cascading evidence removal, pagination, source focus/reload, recovery and mobile input.
 Manual live acceptance uses the new sample transcript and documented meeting-page
 sequence. No live Gemini call was made; Phase 4/5/6 live semantic quality remains unverified.
+
+Final-head CI run `37434250160` passed backend and Windows checks but exposed mobile
+horizontal overflow in four meeting-page browser cases. Comparison pagination kept
+two buttons on one row. Reproduced locally at 320px and confirmed the overflowing
+Next comparisons button, then allowed the pagination group to wrap. The mobile
+keyboard acceptance scenario now covers both 320px and 375px. Production rebuild,
+lint and formatting pass; refreshed desktop/mobile screenshots were visually reviewed.
+The corrected full browser regression passes all 79 scenarios, including the four
+CI failures and both comparison mobile widths. Rechecked development fingerprints:
+all 489 pre-upgrade rows remain unchanged.
 
 ## Delivery and boundary
 

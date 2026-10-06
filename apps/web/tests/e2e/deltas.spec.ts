@@ -379,33 +379,34 @@ test("read and write outages preserve transcript and support recovery", async ({
     await request.delete(`${root}/${m.id}`);
   }
 });
-test("mobile keyboard operation wraps and keeps comparisons accessible", async ({
-  page,
-  request,
-}) => {
-  const m = await create(request, ["SSO Phase 1 proposal."]);
-  try {
-    await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto(href(m.id));
-    const panel = region(page),
-      button = panel.getByRole("button", {
-        name: "Compare with project state",
-        exact: true,
-      });
-    await button.focus();
-    await page.keyboard.press("Enter");
-    await metric(panel, "Compared candidates", 1);
-    await panel.getByLabel("Show comparison outcome").focus();
-    await page.keyboard.press("ArrowDown");
-    await page.keyboard.press("Enter");
-    await expect
-      .poll(() =>
-        page.evaluate(
-          () => document.documentElement.scrollWidth <= window.innerWidth,
-        ),
-      )
-      .toBe(true);
-  } finally {
-    await request.delete(`${root}/${m.id}`);
-  }
-});
+for (const width of [320, 375])
+  test(`mobile keyboard operation wraps and keeps comparisons accessible at ${width}px`, async ({
+    page,
+    request,
+  }) => {
+    const m = await create(request, ["SSO Phase 1 proposal."]);
+    try {
+      await page.setViewportSize({ width, height: 812 });
+      await page.goto(href(m.id));
+      const panel = region(page),
+        button = panel.getByRole("button", {
+          name: "Compare with project state",
+          exact: true,
+        });
+      await button.focus();
+      await page.keyboard.press("Enter");
+      await metric(panel, "Compared candidates", 1);
+      await panel.getByLabel("Show comparison outcome").focus();
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => document.documentElement.scrollWidth <= window.innerWidth,
+          ),
+        )
+        .toBe(true);
+    } finally {
+      await request.delete(`${root}/${m.id}`);
+    }
+  });
