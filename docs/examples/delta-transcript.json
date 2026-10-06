@@ -1,0 +1,14 @@
+{
+  "utterances": [
+    {"speaker":"Sarah","timestamp":"00:00:10","text":"Can we move SSO from Phase 2 to Phase 1?"},
+    {"speaker":"John","timestamp":"00:00:20","text":"SSO remains in Phase 2."},
+    {"speaker":"Sarah","timestamp":"00:00:30","text":"Move the launch date to November 10."},
+    {"speaker":"John","timestamp":"00:00:40","text":"We should use MySQL instead of PostgreSQL for the project."},
+    {"speaker":"Sarah","timestamp":"00:00:50","text":"John will provide production credentials tomorrow."},
+    {"speaker":"John","timestamp":"00:01:00","text":"I cannot promise production credentials by Friday."},
+    {"speaker":"Sarah","timestamp":"00:01:10","text":"The SSO security review might delay launch."},
+    {"speaker":"John","timestamp":"00:01:20","text":"Deployment is blocked by the security review."},
+    {"speaker":"Sarah","timestamp":"00:01:30","text":"Who owns the security review?"},
+    {"speaker":"John","timestamp":"00:01:40","text":"Good morning everyone."}
+  ]
+}

@@ -111,6 +111,7 @@ class ProjectEventCandidate(ProjectOwned, Base):
     __tablename__ = "project_event_candidates"
     __table_args__ = (
         UniqueConstraint("project_id", "meeting_id", "id"),
+        UniqueConstraint("project_id", "meeting_id", "id", "extraction_id"),
         UniqueConstraint("project_id", "meeting_id", "extraction_id", "utterance_id", "ordinal"),
         ForeignKeyConstraint(
             ["project_id", "meeting_id", "extraction_id", "utterance_id"],
