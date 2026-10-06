@@ -138,6 +138,7 @@ def validate_comparisons(
                     not change.proposed_text.isascii()
                     or not change.proposed_text.isdecimal()
                     or not 1 <= int(change.proposed_text) <= 1000
+                    or str(int(change.proposed_text)) != change.proposed_text
                 ):
                     raise ValueError("Invalid phase")
         return batch

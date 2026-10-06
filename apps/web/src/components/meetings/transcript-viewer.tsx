@@ -38,6 +38,7 @@ import { ErrorFeedback } from "../workspace/feedback";
 import { cn } from "../../lib/utils";
 import { MeetingImpact } from "./meeting-impact";
 import { EventCandidates } from "./event-candidates";
+import { ProjectComparisons } from "./project-comparisons";
 
 export function MeetingDetailView({
   projectId,
@@ -70,7 +71,12 @@ export function MeetingDetailView({
         meeting={resource.data}
         onAnalyzed={() => setEventRevision((x) => x + 1)}
       />
-      <EventCandidates meeting={resource.data} revision={eventRevision} />
+      <EventCandidates
+        meeting={resource.data}
+        revision={eventRevision}
+        onExtracted={() => setEventRevision((x) => x + 1)}
+      />
+      <ProjectComparisons meeting={resource.data} revision={eventRevision} />
       <TranscriptViewer
         meeting={resource.data}
         members={members}

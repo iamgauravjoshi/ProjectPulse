@@ -5,7 +5,7 @@ import { eventKinds } from "../features/meetings/events";
 export async function proxyMeetings(
   request: Request,
   params: { projectId: string; meetingId?: string },
-  action?: "participants" | "transcript" | "relevance" | "events",
+  action?: "participants" | "transcript" | "relevance" | "events" | "deltas",
 ) {
   if (
     !z.uuid().safeParse(params.projectId).success ||
@@ -28,6 +28,23 @@ export async function proxyMeetings(
     );
   const query = new URL(request.url).searchParams;
   let relevanceQuery = "";
+  if (action === "deltas") {
+    const options = z
+      .object({
+        page: z.coerce.number().int().min(1).max(400),
+        outcome: z.enum(["ALL", "SAME", "CHANGE", "NEW", "UNCLEAR"]),
+      })
+      .safeParse({
+        page: query.get("page") ?? "1",
+        outcome: query.get("outcome") ?? "ALL",
+      });
+    if (!options.success)
+      return Response.json(
+        { error: { message: "Choose a valid comparison page and filter." } },
+        { status: 422 },
+      );
+    relevanceQuery = `?page=${options.data.page}&outcome=${options.data.outcome}`;
+  }
   if (action === "events") {
     const options = z
       .object({
@@ -68,7 +85,7 @@ export async function proxyMeetings(
       const limit =
         action === "transcript"
           ? 2097152
-          : action === "relevance" || action === "events"
+          : action === "relevance" || action === "events" || action === "deltas"
             ? 0
             : 65536;
       const reader = request.body?.getReader();
@@ -86,7 +103,9 @@ export async function proxyMeetings(
                   message:
                     action === "transcript"
                       ? "Transcripts must be no larger than 2 MiB."
-                      : action === "relevance" || action === "events"
+                      : action === "relevance" ||
+                          action === "events" ||
+                          action === "deltas"
                         ? "Analysis uses server context; send no body."
                         : "Meeting fields are too large.",
                 },
@@ -98,7 +117,7 @@ export async function proxyMeetings(
           chunks.push(result.value);
         }
       body =
-        action === "relevance" || action === "events"
+        action === "relevance" || action === "events" || action === "deltas"
           ? undefined
           : new Uint8Array(size);
       let offset = 0;
@@ -125,7 +144,9 @@ export async function proxyMeetings(
         cache: "no-store",
         redirect: "error",
         signal: AbortSignal.timeout(
-          action === "relevance" || action === "events" ? 35000 : 20000,
+          action === "relevance" || action === "events" || action === "deltas"
+            ? 35000
+            : 20000,
         ),
       },
     );

@@ -78,3 +78,31 @@ work for explicit retry. Old runs remain readable with a stale warning.
 All delta statuses are CANDIDATE. No confirmation, decision-conflict or external
 task operation is introduced. Previous values are copied from the selected canonical
 record; proposed values remain literal wording (including relative/yearless dates).
+
+## Meeting UI
+
+Open a meeting via Meetings. Project Comparisons sits beneath Project Event Candidates
+and above transcript evidence. Explicit relevance/extraction actions refresh its
+prerequisites without reloading the page. It shows compared/pending counts, outcome
+counts, partial source coverage, bounded-context warnings, historical stale results,
+read/write/provider errors, deliberate retry, outcome filters and 100-result pages.
+
+Each result retains candidate/proposal/statement labels, comparator confidence,
+the baseline record/version, server-derived previous values, verbatim proposed wording
+and original speaker/time/quote citations. Date and owner text are not assignments.
+Links open and focus the original utterance, including later transcript pages/reloads.
+The proxy accepts only valid scoped UUIDs/filter/page, enforces same-origin writes,
+empty POST bodies and bounded timeout. Client validation checks scope, counts,
+target kinds/versions, previous-value equality, evidence, source adjacency, literal
+changed wording, confidence/intent constraints and incomplete-context NEW rejection.
+
+Browser acceptance uses a test-only comparison provider in `tests/e2e_app.py` with
+real API/PostgreSQL persistence. Production `app.main:app` uses Gemini with no synthetic
+fallback. See [manual verification](../testing/phase-6-manual-testing.md) for live
+acceptance and [results](../testing/phase-6-results.md) for automated evidence.
+
+Screenshots below use synthetic browser acceptance data, not live Gemini results:
+
+![Desktop project comparisons](images/deltas-desktop.png)
+
+![Mobile project comparisons](images/deltas-mobile.png)

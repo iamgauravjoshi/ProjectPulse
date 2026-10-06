@@ -3,7 +3,7 @@
 Project intelligence and decision reconciliation. Meetings are evidence; the
 project state is the truth.
 
-Phases 0–5 are implemented. Phase 2 adds audited manual editing, a document
+Phases 0–6 are implemented. Phase 2 adds audited manual editing, a document
 library, Gemini indexing and bounded context search in a purple theme. See the
 [project memory feature](docs/features/project-memory.md) and
 [Phase 2 results](docs/testing/phase-2-results.md).
@@ -23,6 +23,14 @@ filters and explicit retries. Candidates remain separate from confirmed state.
 See [event extraction](docs/features/event-extraction.md),
 [manual acceptance](docs/testing/phase-5-manual-testing.md) and
 [Phase 5 results](docs/testing/phase-5-results.md).
+
+Phase 6 compares cited event candidates with versioned project state. It shows
+consistent state, possible changes, potential new items and clarification, preserving
+previous values alongside literal proposed wording. Comparisons never approve or
+apply a change. See [project deltas](docs/features/project-deltas.md),
+[manual acceptance](docs/testing/phase-6-manual-testing.md) and
+[Phase 6 results](docs/testing/phase-6-results.md). Live Gemini semantic quality
+remains unverified until tested on your installation.
 
 The workspace reads the seeded PostgreSQL project
 through FastAPI and displays its trusted baseline, stakeholders, delivery

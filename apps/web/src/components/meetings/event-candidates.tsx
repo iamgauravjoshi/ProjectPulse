@@ -40,9 +40,11 @@ import { ErrorFeedback } from "../workspace/feedback";
 export function EventCandidates({
   meeting,
   revision,
+  onExtracted,
 }: {
   meeting: MeetingDetail;
   revision: number;
+  onExtracted?: () => void;
 }) {
   const [page, setPage] = useState(1);
   const [kind, setKind] = useState<EventFilter>("ALL");
@@ -85,6 +87,7 @@ export function EventCandidates({
         );
       setPage(1);
       resource.reload();
+      onExtracted?.();
     } catch (e) {
       setError(
         e instanceof Error

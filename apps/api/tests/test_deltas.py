@@ -204,6 +204,17 @@ def test_identical_value_is_not_a_change_and_partial_owner_is_rejected():
         )
 
 
+def test_phase_wording_cannot_fake_a_difference_with_leading_zeros():
+    source, context = inputs()
+    source.evidence[0].quote = "Move SSO to Phase 02."
+    with pytest.raises(StateError):
+        validate_comparisons(
+            output(source, context, changes=[{"field": "phase", "proposedText": "02"}]),
+            [source],
+            context,
+        )
+
+
 def configure(monkeypatch, **settings):
     monkeypatch.setenv("GEMINI_API_KEY", "synthetic-test-key")
     for name, value in settings.items():
